@@ -1,2 +1,3 @@
 # Ludo_RN
-Making of a Ludo Game
+
+Making of a Ludo Game using React Native
