@@ -11,12 +11,14 @@ interface PlayerFieldProps {
   text: string;
   textColor: string;
   val: string;
+  fieldBorderColor: string;
   fieldColor: string;
-  onChangeText: () => void;
+  onChangeText: (txt: any) => void;
 }
 
 const PlayerField = (props: PlayerFieldProps) => {
-  const { text, textColor, val, fieldColor, onChangeText } = props;
+  const { text, textColor, val, fieldBorderColor, fieldColor, onChangeText } =
+    props;
   return (
     <View style={styles.fieldContainer}>
       <Text style={[styles.playerName, { color: textColor }]}>{text}</Text>
@@ -25,7 +27,7 @@ const PlayerField = (props: PlayerFieldProps) => {
         onChangeText={onChangeText}
         style={[
           styles.playerField,
-          { borderColor: textColor, backgroundColor: fieldColor },
+          { borderColor: fieldBorderColor, backgroundColor: fieldColor },
         ]}
       />
     </View>
@@ -37,10 +39,11 @@ export default PlayerField;
 const styles = StyleSheet.create({
   fieldContainer: {
     marginTop: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   playerName: {
     fontSize: 16,
+    marginBottom: 5,
   },
   playerField: {
     padding: 10,
