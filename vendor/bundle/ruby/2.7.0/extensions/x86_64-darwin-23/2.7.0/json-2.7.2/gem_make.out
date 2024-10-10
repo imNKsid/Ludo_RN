@@ -1,0 +1,13 @@
+current directory: /Users/mac/Documents/Projects/Ludo/vendor/bundle/ruby/2.7.0/gems/json-2.7.2/ext/json
+/Users/mac/.rbenv/versions/2.7.6/bin/ruby -I /Users/mac/.rbenv/versions/2.7.6/lib/ruby/2.7.0 -r ./siteconf20241009-67260-1f9qugq.rb extconf.rb
+creating Makefile
+
+current directory: /Users/mac/Documents/Projects/Ludo/vendor/bundle/ruby/2.7.0/gems/json-2.7.2/ext/json
+make "DESTDIR=" clean
+
+current directory: /Users/mac/Documents/Projects/Ludo/vendor/bundle/ruby/2.7.0/gems/json-2.7.2/ext/json
+make "DESTDIR="
+make: Nothing to be done for `all'.
+
+current directory: /Users/mac/Documents/Projects/Ludo/vendor/bundle/ruby/2.7.0/gems/json-2.7.2/ext/json
+make "DESTDIR=" install
