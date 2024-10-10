@@ -1,15 +1,54 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { IMAGES } from "../assets";
+import { CustomButton, NewGameModal } from "../components";
 
-const Home = () => {
+interface HomeProps {
+  showStartGameModal: boolean;
+  onNewGameBtnPress: () => void;
+  onCancel: () => void;
+  playerRed: any;
+  playerYellow: any;
+  playerGreen: any;
+  playerBlue: any;
+  onRedInput: (txt: any) => void;
+  onYellowInput: (txt: any) => void;
+  onGreenInput: (txt: any) => void;
+  onBlueInput: (txt: any) => void;
+}
+
+const Home = (props: HomeProps) => {
+  const {
+    showStartGameModal,
+    onNewGameBtnPress,
+    onCancel,
+    playerRed,
+    playerYellow,
+    playerGreen,
+    playerBlue,
+    onRedInput,
+    onYellowInput,
+    onGreenInput,
+    onBlueInput,
+  } = props;
+
   return (
     <View style={styles.container}>
       <Text style={styles.logoStyle}>Ludo Classic</Text>
-      <TouchableOpacity style={styles.newBtn}>
-        <Text>New Game</Text>
-      </TouchableOpacity>
+      <CustomButton title={"New Game"} onPress={onNewGameBtnPress} />
       <Image source={IMAGES.board} style={styles.ludoBoard} />
+      <NewGameModal
+        isVisible={showStartGameModal}
+        onClose={onCancel}
+        redPlayer={playerRed}
+        yellowPlayer={playerYellow}
+        greenPlayer={playerGreen}
+        bluePlayer={playerBlue}
+        onRedInput={onRedInput}
+        onYellowInput={onYellowInput}
+        onGreenInput={onGreenInput}
+        onBlueInput={onBlueInput}
+      />
     </View>
   );
 };
@@ -27,17 +66,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 100,
     fontWeight: "bold",
-  },
-  newBtn: {
-    backgroundColor: "#FFF",
-    width: 200,
-    padding: 10,
-    borderColor: "#DDD",
-    borderWidth: 2,
-    alignSelf: "center",
-    alignItems: "center",
-    marginTop: 20,
-    borderRadius: 10,
   },
   ludoBoard: {
     width: "70%",
