@@ -7,6 +7,7 @@ interface HomeProps {
   showStartGameModal: boolean;
   onNewGameBtnPress: () => void;
   onCancel: () => void;
+  onStartGameBtnPress: () => void;
   playerRed: any;
   playerYellow: any;
   playerGreen: any;
@@ -22,6 +23,7 @@ const Home = (props: HomeProps) => {
     showStartGameModal,
     onNewGameBtnPress,
     onCancel,
+    onStartGameBtnPress,
     playerRed,
     playerYellow,
     playerGreen,
@@ -40,6 +42,7 @@ const Home = (props: HomeProps) => {
       <NewGameModal
         isVisible={showStartGameModal}
         onClose={onCancel}
+        onStartGamePress={onStartGameBtnPress}
         redPlayer={playerRed}
         yellowPlayer={playerYellow}
         greenPlayer={playerGreen}
