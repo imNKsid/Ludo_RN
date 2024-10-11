@@ -20,6 +20,10 @@ const App = () => {
             showStartGameModal={showStartModal}
             onNewGameBtnPress={() => setShowStartModal(true)}
             onCancel={() => setShowStartModal(false)}
+            onStartGameBtnPress={() => {
+              setShowStartModal(false);
+              setGameInProgress(true);
+            }}
             playerRed={redPlayer}
             playerYellow={yellowPlayer}
             playerGreen={greenPlayer}
