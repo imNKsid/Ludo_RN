@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Alert, Modal, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import PlayerField from "./player-field";
 import CustomButton from "./custom-button";
@@ -6,6 +6,7 @@ import CustomButton from "./custom-button";
 interface NewGameModalProps {
   isVisible: boolean;
   onClose: () => void;
+  onStartGamePress: () => void;
   redPlayer: any;
   yellowPlayer: any;
   greenPlayer: any;
@@ -20,6 +21,7 @@ const NewGameModal = (props: NewGameModalProps) => {
   const {
     isVisible,
     onClose,
+    onStartGamePress,
     redPlayer,
     yellowPlayer,
     greenPlayer,
@@ -29,6 +31,27 @@ const NewGameModal = (props: NewGameModalProps) => {
     onGreenInput,
     onBlueInput,
   } = props;
+
+  const startGame = () => {
+    let minPlayersCount = 0;
+
+    if (redPlayer.name !== "") {
+      minPlayersCount++;
+    }
+    if (yellowPlayer.name !== "") {
+      minPlayersCount++;
+    }
+    if (greenPlayer.name !== "") {
+      minPlayersCount++;
+    }
+    if (bluePlayer.name !== "") {
+      minPlayersCount++;
+    }
+
+    minPlayersCount >= 2
+      ? onStartGamePress()
+      : Alert.alert("Please enter atleast 2 player names!");
+  };
 
   return (
     <View>
@@ -72,7 +95,7 @@ const NewGameModal = (props: NewGameModalProps) => {
               fieldColor={"#DDF"}
               onChangeText={onBlueInput}
             />
-            <CustomButton title={"Start Game"} onPress={() => {}} />
+            <CustomButton title={"Start Game"} onPress={startGame} />
             <CustomButton title={"Cancel"} onPress={onClose} />
           </View>
         </View>
@@ -87,6 +110,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
+    backgroundColor: "#bfbebb80",
   },
   modalView: {
     backgroundColor: "#FFF",
