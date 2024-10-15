@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { IMAGES } from "../assets";
+import { COLORS, IMAGES } from "../assets";
 import { CustomButton, NewGameModal } from "../components";
 
 interface HomeProps {
@@ -61,10 +61,10 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FF0",
+    backgroundColor: COLORS.bgColor,
   },
   logoStyle: {
-    color: "#F00",
+    color: COLORS.redPlayerColor,
     fontSize: 40,
     alignSelf: "center",
     marginTop: 100,

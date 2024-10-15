@@ -2,6 +2,7 @@ import { Alert, Modal, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import PlayerField from "./player-field";
 import CustomButton from "./custom-button";
+import { COLORS } from "../assets";
 
 interface NewGameModalProps {
   isVisible: boolean;
@@ -65,34 +66,34 @@ const NewGameModal = (props: NewGameModalProps) => {
           <View style={styles.modalView}>
             <PlayerField
               text={"Red Player Name"}
-              textColor={"#F00"}
+              textColor={COLORS.redPlayerColor}
               val={redPlayer.name}
-              fieldBorderColor={"#FFCCCC"}
-              fieldColor={"#FFEFEF"}
+              fieldBorderColor={COLORS.redFieldBorder}
+              fieldColor={COLORS.redField}
               onChangeText={onRedInput}
             />
             <PlayerField
               text={"Yellow Player Name"}
-              textColor={"#dbba23"}
+              textColor={COLORS.yellowPlayerColor}
               val={yellowPlayer.name}
-              fieldBorderColor={"#FFD520"}
-              fieldColor={"#FFD"}
+              fieldBorderColor={COLORS.yellowFieldBorder}
+              fieldColor={COLORS.yellowField}
               onChangeText={onYellowInput}
             />
             <PlayerField
               text={"Green Player Name"}
-              textColor={"#27cf27"}
+              textColor={COLORS.greenPlayerColor}
               val={greenPlayer.name}
-              fieldBorderColor={"#68f768"}
-              fieldColor={"#DFD"}
+              fieldBorderColor={COLORS.greenFieldBorder}
+              fieldColor={COLORS.greenField}
               onChangeText={onGreenInput}
             />
             <PlayerField
               text={"Blue Player Name"}
-              textColor={"#00F"}
+              textColor={COLORS.bluePlayerColor}
               val={bluePlayer.name}
-              fieldBorderColor={"#4e4ef5"}
-              fieldColor={"#DDF"}
+              fieldBorderColor={COLORS.blueFieldBorder}
+              fieldColor={COLORS.blueField}
               onChangeText={onBlueInput}
             />
             <CustomButton title={"Start Game"} onPress={startGame} />
