@@ -1,5 +1,6 @@
 export const COLORS = {
   white: "#FFF",
+  black: "#000",
   bgColor: "#FF0",
   redPlayerColor: "#F00",
   redFieldBorder: "#FFCCCC",
