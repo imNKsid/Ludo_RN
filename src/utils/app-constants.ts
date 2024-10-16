@@ -14,4 +14,6 @@ export const PLAYER_COUNT = {
 
 export const POSITION = {
   HOME: "HOME",
+  TOP_VERTICAL: "TOP_VERTICAL",
+  BOTTOM_VERTICAL: "BOTTOM_VERTICAL",
 };
