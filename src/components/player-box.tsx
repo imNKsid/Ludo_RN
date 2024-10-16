@@ -46,7 +46,7 @@ const Player = ({ piece }: { piece: PlayerProps }) => {
       <View
         style={[
           styles.pieceStyle,
-          { backgroundColor: position === "home" ? color : COLORS.white },
+          { backgroundColor: position === "HOME" ? color : COLORS.white },
         ]}
       />
     </TouchableOpacity>

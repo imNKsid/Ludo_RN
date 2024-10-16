@@ -13,5 +13,5 @@ export const PLAYER_COUNT = {
 };
 
 export const POSITION = {
-  HOME: "home",
+  HOME: "HOME",
 };
