@@ -11,3 +11,7 @@ export const PLAYER_COUNT = {
   THREE: "three",
   FOUR: "four",
 };
+
+export const POSITION = {
+  HOME: "home",
+};
