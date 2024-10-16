@@ -1,3 +1,4 @@
-import { WindowDimensions, isAndroid, isIOS } from "./globalConstants";
+import { PLAYER, PLAYER_COUNT } from "./app-constants";
+import { WindowDimensions, isAndroid, isIOS } from "./global-constants";
 
-export { WindowDimensions, isAndroid, isIOS };
+export { PLAYER, PLAYER_COUNT, WindowDimensions, isAndroid, isIOS };
