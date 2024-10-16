@@ -1,13 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { PLAYER, PLAYER_COUNT, POSITION, WindowDimensions } from "../utils";
-import { PlayerBox } from "../components";
+import { PlayerBox, VerticalCellsContainer } from "../components";
 import { COLORS } from "../assets";
 
 const Game = () => {
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
   const { ONE, TWO, THREE, FOUR } = PLAYER_COUNT;
-  const { HOME } = POSITION;
+  const { HOME, TOP_VERTICAL, BOTTOM_VERTICAL } = POSITION;
 
   const {
     redPlayerColor,
@@ -54,13 +54,13 @@ const Game = () => {
       <View style={styles.gameContainer}>
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={red} customStyle={styles.redBox} />
-          <View style={{ flex: 2 }} />
+          <VerticalCellsContainer position={TOP_VERTICAL} />
           <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
         </View>
         <View style={styles.horizontalCellsContainer} />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={green} customStyle={styles.greenBox} />
-          <View style={{ flex: 2 }} />
+          <VerticalCellsContainer position={BOTTOM_VERTICAL} />
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
         </View>
       </View>
