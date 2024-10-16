@@ -1,13 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { PLAYER, PLAYER_COUNT, WindowDimensions } from "../utils";
+import { PLAYER, PLAYER_COUNT, POSITION, WindowDimensions } from "../utils";
 import { PlayerBox } from "../components";
 import { COLORS } from "../assets";
 
 const Game = () => {
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
-
   const { ONE, TWO, THREE, FOUR } = PLAYER_COUNT;
+  const { HOME } = POSITION;
 
   const {
     redPlayerColor,
@@ -42,10 +42,10 @@ const Game = () => {
 
   const initPieces = (playerColor: string) => {
     return {
-      one: { name: ONE, color: playerColor },
-      two: { name: TWO, color: playerColor },
-      three: { name: THREE, color: playerColor },
-      four: { name: FOUR, color: playerColor },
+      one: { position: HOME, name: ONE, color: playerColor },
+      two: { position: HOME, name: TWO, color: playerColor },
+      three: { position: HOME, name: THREE, color: playerColor },
+      four: { position: HOME, name: FOUR, color: playerColor },
     };
   };
 
