@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { PLAYER, PLAYER_COUNT, POSITION, WindowDimensions } from "../utils";
 import { PlayerBox, VerticalCellsContainer } from "../components";
@@ -20,6 +20,7 @@ const Game = () => {
   const [yellow, setYellow] = useState({});
   const [green, setGreen] = useState({});
   const [blue, setBlue] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const redPlayer = initPlayer(RED, redPlayerColor);
@@ -30,6 +31,8 @@ const Game = () => {
     setGreen(greenPlayer);
     const bluePlayer = initPlayer(BLUE, bluePlayerColor);
     setBlue(bluePlayer);
+
+    setIsLoading(false);
   }, []);
 
   const initPlayer = (playerType: string, color: string) => {
@@ -48,6 +51,10 @@ const Game = () => {
       four: { position: HOME, name: FOUR, color: playerColor },
     };
   };
+
+  if (isLoading) {
+    return <Text>Loading...</Text>; // Or a loading spinner
+  }
 
   return (
     <View style={styles.container}>
