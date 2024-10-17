@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { PLAYER, PLAYER_COUNT, POSITION, WindowDimensions } from "../utils";
-import { PlayerBox, VerticalCellsContainer } from "../components";
+import {
+  HorizontalCellsContainer,
+  PlayerBox,
+  VerticalCellsContainer,
+} from "../components";
 import { COLORS } from "../assets";
 
 const Game = () => {
@@ -64,7 +68,7 @@ const Game = () => {
           <VerticalCellsContainer position={TOP_VERTICAL} />
           <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
         </View>
-        <View style={styles.horizontalCellsContainer} />
+        <HorizontalCellsContainer />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={green} customStyle={styles.greenBox} />
           <VerticalCellsContainer position={BOTTOM_VERTICAL} />
@@ -112,10 +116,6 @@ const styles = StyleSheet.create({
     flex: 3,
     // backgroundColor: "#DDD",
     flexDirection: "row",
-  },
-  horizontalCellsContainer: {
-    flex: 2,
-    backgroundColor: COLORS.white,
   },
   redBox: { borderTopLeftRadius: 20 },
   yellowBox: { borderTopRightRadius: 20 },
