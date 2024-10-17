@@ -6,61 +6,40 @@ const HorizontalCellsContainer = () => {
   return (
     <View style={styles.container}>
       <View style={styles.rowsContainer}>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-
+        <RenderCell />
         <View style={{ flex: 3 }} />
-
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
+        <RenderCell />
       </View>
+
       <View style={styles.rowsContainer}>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-
+        <RenderCell />
         <View style={{ flex: 3 }} />
-
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
+        <RenderCell />
       </View>
+
       <View style={styles.rowsContainer}>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-
+        <RenderCell />
         <View style={{ flex: 3 }} />
-
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
-        <View style={styles.cellContainer}></View>
+        <RenderCell />
       </View>
     </View>
   );
 };
 
 export default HorizontalCellsContainer;
+
+const RenderCell = () => {
+  return (
+    <>
+      <View style={styles.cellContainer}></View>
+      <View style={styles.cellContainer}></View>
+      <View style={styles.cellContainer}></View>
+      <View style={styles.cellContainer}></View>
+      <View style={styles.cellContainer}></View>
+      <View style={styles.cellContainer}></View>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -70,8 +49,6 @@ const styles = StyleSheet.create({
   rowsContainer: {
     flex: 1,
     flexDirection: "row",
-    borderColor: COLORS.black,
-    borderWidth: 1,
   },
   cellContainer: {
     flex: 1,
