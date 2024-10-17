@@ -31,7 +31,7 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
 
   const renderCell = (item: any) => {
     return (
-      <View style={styles.cellContainer}>
+      <View style={styles.cellContainer} key={item}>
         <Text>{item}</Text>
       </View>
     );
