@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 import { BLUE_CELLS, GREEN_CELLS, RED_CELLS, YELLOW_CELLS } from "../utils";
@@ -14,67 +14,39 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
   const { G6, G7, G8, G9, G10, G11, G12, G13 } = GREEN_CELLS;
   const { B1, B2, B3, B4, B5, B14, B15, B16, B17, B18 } = BLUE_CELLS;
 
+  const column1 =
+    position === "TOP_VERTICAL"
+      ? [R11, R10, R9, R8, R7, R6]
+      : [B5, B4, B3, B2, B1, G13];
+
+  const column2 =
+    position === "TOP_VERTICAL"
+      ? [R12, Y14, Y15, Y16, Y17, Y18]
+      : [B18, B17, B16, B15, B14, G12];
+
+  const column3 =
+    position === "TOP_VERTICAL"
+      ? [R13, Y1, Y2, Y3, Y4, Y5]
+      : [G6, G7, G8, G9, G10, G11];
+
+  const renderCell = (item: any) => {
+    return (
+      <View style={styles.cellContainer}>
+        <Text>{item}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.columnContainer}>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R11 : B5}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R10 : B4}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R9 : B3}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R8 : B2}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R7 : B1}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R6 : G13}</Text>
-        </View>
+        {column1.map((item) => renderCell(item))}
       </View>
       <View style={styles.columnContainer}>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R12 : B18}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y14 : B17}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y15 : B16}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y16 : B15}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y17 : B14}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y18 : G12}</Text>
-        </View>
+        {column2.map((item) => renderCell(item))}
       </View>
       <View style={styles.columnContainer}>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? R13 : G6}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y1 : G7}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y2 : G8}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y3 : G9}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y4 : G10}</Text>
-        </View>
-        <View style={styles.cellContainer}>
-          <Text>{position === "TOP_VERTICAL" ? Y5 : G11}</Text>
-        </View>
+        {column3.map((item) => renderCell(item))}
       </View>
     </View>
   );
