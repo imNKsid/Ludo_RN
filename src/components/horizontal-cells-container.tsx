@@ -16,25 +16,21 @@ const HorizontalCellsContainer = () => {
   const midRightArray = [G18, G17, G16, G15, G14, Y12];
   const bottomRightArray = [G5, G4, G3, G2, G1, Y13];
 
+  const RenderRow = ({ leftArr, rightArr }: any) => {
+    return (
+      <View style={styles.rowsContainer}>
+        <RenderCell posArray={leftArr} />
+        <View style={{ flex: 3 }} />
+        <RenderCell posArray={rightArr} />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.rowsContainer}>
-        <RenderCell posArray={topLeftArray} />
-        <View style={{ flex: 3 }} />
-        <RenderCell posArray={topRightArray} />
-      </View>
-
-      <View style={styles.rowsContainer}>
-        <RenderCell posArray={midLeftArray} />
-        <View style={{ flex: 3 }} />
-        <RenderCell posArray={midRightArray} />
-      </View>
-
-      <View style={styles.rowsContainer}>
-        <RenderCell posArray={bottomLeftArray} />
-        <View style={{ flex: 3 }} />
-        <RenderCell posArray={bottomRightArray} />
-      </View>
+      <RenderRow leftArr={topLeftArray} rightArr={topRightArray} />
+      <RenderRow leftArr={midLeftArray} rightArr={midRightArray} />
+      <RenderRow leftArr={bottomLeftArray} rightArr={bottomRightArray} />
     </View>
   );
 };
