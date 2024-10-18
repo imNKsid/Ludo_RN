@@ -4,6 +4,7 @@ import PlayerField from "./player-field";
 import PlayerBox from "./player-box";
 import VerticalCellsContainer from "./vertical-cells-container";
 import HorizontalCellsContainer from "./horizontal-cells-container";
+import Dice from "./dice";
 
 export {
   CustomButton,
@@ -12,4 +13,5 @@ export {
   PlayerBox,
   VerticalCellsContainer,
   HorizontalCellsContainer,
+  Dice,
 };
