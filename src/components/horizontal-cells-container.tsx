@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 import { BLUE_CELLS, GREEN_CELLS, RED_CELLS, YELLOW_CELLS } from "../utils";
+import Dice from "./dice";
 
 const HorizontalCellsContainer = () => {
   const { R1, R2, R3, R4, R5, R14, R15, R16, R17, R18 } = RED_CELLS;
@@ -28,6 +29,7 @@ const HorizontalCellsContainer = () => {
 
   return (
     <View style={styles.container}>
+      <Dice />
       <RenderRow leftArr={topLeftArray} rightArr={topRightArray} />
       <RenderRow leftArr={midLeftArray} rightArr={midRightArray} />
       <RenderRow leftArr={bottomLeftArray} rightArr={bottomRightArray} />
