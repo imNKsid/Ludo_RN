@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text } from "react-native";
 import React from "react";
 import { COLORS, IMAGES } from "../assets";
 import { CustomButton, NewGameModal } from "../components";
@@ -35,7 +35,7 @@ const Home = (props: HomeProps) => {
   } = props;
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={IMAGES.home} style={styles.container}>
       <Text style={styles.logoStyle}>Ludo Classic</Text>
       <CustomButton title={"New Game"} onPress={onNewGameBtnPress} />
       <Image source={IMAGES.board} style={styles.ludoBoard} />
@@ -52,7 +52,7 @@ const Home = (props: HomeProps) => {
         onGreenInput={onGreenInput}
         onBlueInput={onBlueInput}
       />
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -61,7 +61,6 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgColor,
   },
   logoStyle: {
     color: COLORS.redPlayerColor,
@@ -71,9 +70,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   ludoBoard: {
+    marginTop: 150,
     width: "70%",
-    height: "70%",
-    resizeMode: "contain",
+    height: "33%",
+    resizeMode: "stretch",
     alignSelf: "center",
+    borderRadius: 20,
   },
 });
