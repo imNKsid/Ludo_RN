@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { PLAYER, PLAYER_COUNT, POSITION, WindowDimensions } from "../utils";
 import {
@@ -6,7 +6,7 @@ import {
   PlayerBox,
   VerticalCellsContainer,
 } from "../components";
-import { COLORS } from "../assets";
+import { COLORS, IMAGES } from "../assets";
 
 const Game = () => {
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
@@ -61,7 +61,7 @@ const Game = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={IMAGES.home} style={styles.container}>
       <View style={styles.gameContainer}>
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={red} customStyle={styles.redBox} />
@@ -75,7 +75,7 @@ const Game = () => {
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -101,7 +101,6 @@ const RenderPlayer = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgColor,
     justifyContent: "center",
     alignItems: "center",
   },
