@@ -1,88 +1,42 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
+import { PLAYER } from "../utils";
 
 const Dice = () => {
-  const RenderSurfaceOne = () => {
-    return (
-      <>
-        <View style={styles.diceDot} />
-      </>
-    );
-  };
+  const { RED, YELLOW, GREEN, BLUE } = PLAYER;
+  const {
+    redPlayerColor,
+    yellowPlayerColor,
+    greenPlayerColor,
+    bluePlayerColor,
+  } = COLORS;
 
-  const RenderSurfaceTwo = () => {
-    return (
-      <View>
-        <RenderSurfaceOne />
-        <RenderSurfaceOne />
-      </View>
-    );
-  };
+  let turn = RED;
 
-  const RenderSurfaceThree = () => {
-    return (
-      <View>
-        <RenderSurfaceTwo />
-        <RenderSurfaceOne />
-      </View>
-    );
-  };
+  const getColor = () => {
+    switch (turn) {
+      case RED:
+        return redPlayerColor;
 
-  const RenderSurfaceFour = () => {
-    return (
-      <View style={styles.diceFour}>
-        <RenderSurfaceTwo />
-        <RenderSurfaceTwo />
-      </View>
-    );
-  };
+      case YELLOW:
+        return yellowPlayerColor;
 
-  const RenderSurfaceFive = () => {
-    return (
-      <View style={styles.diceFour}>
-        <RenderSurfaceTwo />
-        <RenderSurfaceOne />
-        <RenderSurfaceTwo />
-      </View>
-    );
-  };
+      case GREEN:
+        return greenPlayerColor;
 
-  const RenderSurfaceSix = () => {
-    return (
-      <View style={styles.diceFour}>
-        <RenderSurfaceThree />
-        <RenderSurfaceThree />
-      </View>
-    );
-  };
+      case BLUE:
+        return bluePlayerColor;
 
-  const RenderDiceSurface = ({ face }: { face: number }) => {
-    switch (face) {
-      case 1:
-        return <RenderSurfaceOne />;
-
-      case 2:
-        return <RenderSurfaceTwo />;
-
-      case 3:
-        return <RenderSurfaceThree />;
-
-      case 4:
-        return <RenderSurfaceFour />;
-
-      case 5:
-        return <RenderSurfaceFive />;
-
-      case 6:
-        return <RenderSurfaceSix />;
+      default:
+        return redPlayerColor;
     }
   };
 
   return (
     <View>
       <Text style={styles.txtStyle}>Roll Dice</Text>
-      <View style={styles.diceContainer}>
+      <View style={[styles.diceContainer, { backgroundColor: getColor() }]}>
         <RenderDiceSurface face={6} />
       </View>
     </View>
@@ -90,6 +44,82 @@ const Dice = () => {
 };
 
 export default Dice;
+
+const RenderDiceSurface = ({ face }: { face: number }) => {
+  switch (face) {
+    case 1:
+      return <RenderSurfaceOne />;
+
+    case 2:
+      return <RenderSurfaceTwo />;
+
+    case 3:
+      return <RenderSurfaceThree />;
+
+    case 4:
+      return <RenderSurfaceFour />;
+
+    case 5:
+      return <RenderSurfaceFive />;
+
+    case 6:
+      return <RenderSurfaceSix />;
+  }
+};
+
+const RenderSurfaceOne = () => {
+  return (
+    <>
+      <View style={styles.diceDot} />
+    </>
+  );
+};
+
+const RenderSurfaceTwo = () => {
+  return (
+    <View>
+      <RenderSurfaceOne />
+      <RenderSurfaceOne />
+    </View>
+  );
+};
+
+const RenderSurfaceThree = () => {
+  return (
+    <View>
+      <RenderSurfaceTwo />
+      <RenderSurfaceOne />
+    </View>
+  );
+};
+
+const RenderSurfaceFour = () => {
+  return (
+    <View style={styles.diceFour}>
+      <RenderSurfaceTwo />
+      <RenderSurfaceTwo />
+    </View>
+  );
+};
+
+const RenderSurfaceFive = () => {
+  return (
+    <View style={styles.diceFour}>
+      <RenderSurfaceTwo />
+      <RenderSurfaceOne />
+      <RenderSurfaceTwo />
+    </View>
+  );
+};
+
+const RenderSurfaceSix = () => {
+  return (
+    <View style={styles.diceFour}>
+      <RenderSurfaceThree />
+      <RenderSurfaceThree />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   txtStyle: {
@@ -104,7 +134,6 @@ const styles = StyleSheet.create({
     marginTop: 35,
     width: 50,
     height: 50,
-    backgroundColor: COLORS.redPlayerColor,
     borderRadius: 5,
   },
   diceDot: {
