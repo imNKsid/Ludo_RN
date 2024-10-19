@@ -1,9 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 import { PLAYER } from "../utils";
 
-const Dice = () => {
+interface DiceProps {
+  isRolling: boolean;
+  setIsRolling: (val: boolean) => void;
+  diceNum: number;
+  setDiceNum: (val: number) => void;
+  turn: string;
+  setTurn: (val: string) => void;
+}
+
+const Dice = (props: DiceProps) => {
+  const { isRolling, setIsRolling, diceNum, setDiceNum, turn, setTurn } = props;
+
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
   const {
     redPlayerColor,
@@ -12,7 +29,8 @@ const Dice = () => {
     bluePlayerColor,
   } = COLORS;
 
-  let turn = RED;
+  //   let isRolling = false;
+  //   let turn = RED;
 
   const getColor = () => {
     switch (turn) {
@@ -36,9 +54,17 @@ const Dice = () => {
   return (
     <View>
       <Text style={styles.txtStyle}>Roll Dice</Text>
-      <View style={[styles.diceContainer, { backgroundColor: getColor() }]}>
-        <RenderDiceSurface face={6} />
-      </View>
+      {isRolling ? (
+        <View style={styles.rolling}>
+          <ActivityIndicator size={"large"} />
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={[styles.diceContainer, { backgroundColor: getColor() }]}
+        >
+          <RenderDiceSurface face={6} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -147,5 +173,10 @@ const styles = StyleSheet.create({
   diceFour: {
     flexDirection: "row",
     alignSelf: "center",
+  },
+  rolling: {
+    position: "absolute",
+    alignSelf: "center",
+    marginTop: 40,
   },
 });
