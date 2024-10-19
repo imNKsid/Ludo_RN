@@ -8,7 +8,16 @@ import {
 } from "../components";
 import { COLORS, IMAGES } from "../assets";
 
-const Game = () => {
+interface GameProps {
+  redName: string;
+  yellowName: string;
+  greenName: string;
+  blueName: string;
+}
+
+const Game = (props: GameProps) => {
+  const { redName, yellowName, greenName, blueName } = props;
+
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
   const { ONE, TWO, THREE, FOUR } = PLAYER_COUNT;
   const { HOME, TOP_VERTICAL, BOTTOM_VERTICAL } = POSITION;
@@ -25,6 +34,25 @@ const Game = () => {
   const [green, setGreen] = useState({});
   const [blue, setBlue] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isRolling, setIsRolling] = useState(false);
+  const [diceNum, setDiceNum] = useState(2);
+  const [turn, setTurn] = useState("");
+
+  const getUserTurn = () => {
+    if (redName !== "") {
+      return RED;
+    }
+    if (yellowName !== "") {
+      return YELLOW;
+    }
+    if (greenName !== "") {
+      return GREEN;
+    }
+    if (blueName !== "") {
+      return BLUE;
+    }
+    return "";
+  };
 
   useEffect(() => {
     const redPlayer = initPlayer(RED, redPlayerColor);
@@ -35,6 +63,9 @@ const Game = () => {
     setGreen(greenPlayer);
     const bluePlayer = initPlayer(BLUE, bluePlayerColor);
     setBlue(bluePlayer);
+
+    const userTurn = getUserTurn();
+    setTurn(userTurn);
 
     setIsLoading(false);
   }, []);
@@ -68,7 +99,14 @@ const Game = () => {
           <VerticalCellsContainer position={TOP_VERTICAL} />
           <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
         </View>
-        <HorizontalCellsContainer />
+        <HorizontalCellsContainer
+          isRolling={isRolling}
+          setIsRolling={setIsRolling}
+          diceNum={diceNum}
+          setDiceNum={setDiceNum}
+          turn={turn}
+          setTurn={setTurn}
+        />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={green} customStyle={styles.greenBox} />
           <VerticalCellsContainer position={BOTTOM_VERTICAL} />
