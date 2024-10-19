@@ -14,7 +14,12 @@ const App = () => {
     <View style={styles.container}>
       <>
         {gameInProgress ? (
-          <Game />
+          <Game
+            redName={redPlayer.name}
+            yellowName={yellowPlayer.name}
+            greenName={greenPlayer.name}
+            blueName={bluePlayer.name}
+          />
         ) : (
           <Home
             showStartGameModal={showStartModal}
