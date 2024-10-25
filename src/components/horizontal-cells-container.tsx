@@ -3,6 +3,7 @@ import React from "react";
 import { COLORS } from "../assets";
 import { BLUE_CELLS, GREEN_CELLS, RED_CELLS, YELLOW_CELLS } from "../utils";
 import Dice from "./dice";
+import CellBox from "./cell-box";
 
 interface HorizontalCellsContainerProps {
   isRolling: boolean;
@@ -63,7 +64,8 @@ const RenderCell = ({ posArray }: any) => {
       {posArray.map((item: any) => {
         return (
           <View style={styles.cellContainer} key={item}>
-            <Text>{item}</Text>
+            {/* <Text>{item}</Text> */}
+            <CellBox />
           </View>
         );
       })}

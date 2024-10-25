@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 import { BLUE_CELLS, GREEN_CELLS, RED_CELLS, YELLOW_CELLS } from "../utils";
+import CellBox from "./cell-box";
 
 interface VerticalCellsContainerProps {
   position: string;
@@ -32,7 +33,8 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
   const renderCell = (item: any) => {
     return (
       <View style={styles.cellContainer} key={item}>
-        <Text>{item}</Text>
+        {/* <Text>{item}</Text> */}
+        <CellBox />
       </View>
     );
   };
