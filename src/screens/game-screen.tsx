@@ -91,6 +91,10 @@ const Game = (props: GameProps) => {
     return <Text>Loading...</Text>; // Or a loading spinner
   }
 
+  const handleDiceRoll = () => {
+    console.log("Dice Pressed");
+  };
+
   return (
     <ImageBackground source={IMAGES.home} style={styles.container}>
       <View style={styles.gameContainer}>
@@ -106,6 +110,7 @@ const Game = (props: GameProps) => {
           setDiceNum={setDiceNum}
           turn={turn}
           setTurn={setTurn}
+          handleDiceRoll={handleDiceRoll}
         />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
