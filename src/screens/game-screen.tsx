@@ -108,9 +108,9 @@ const Game = (props: GameProps) => {
           setTurn={setTurn}
         />
         <View style={styles.twoPlayersContainer}>
-          <RenderPlayer player={green} customStyle={styles.greenBox} />
-          <VerticalCellsContainer position={BOTTOM_VERTICAL} />
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
+          <VerticalCellsContainer position={BOTTOM_VERTICAL} />
+          <RenderPlayer player={green} customStyle={styles.greenBox} />
         </View>
       </View>
     </ImageBackground>
