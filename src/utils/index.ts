@@ -7,6 +7,7 @@ import {
   GREEN_CELLS,
   BLUE_CELLS,
 } from "./app-constants";
+import { getCellBgColor } from "./app-utils";
 import { WindowDimensions, isAndroid, isIOS } from "./global-constants";
 
 export {
@@ -20,4 +21,5 @@ export {
   WindowDimensions,
   isAndroid,
   isIOS,
+  getCellBgColor,
 };
