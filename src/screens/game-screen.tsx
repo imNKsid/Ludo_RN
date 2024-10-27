@@ -156,11 +156,10 @@ const styles = StyleSheet.create({
   },
   twoPlayersContainer: {
     flex: 3,
-    // backgroundColor: "#DDD",
     flexDirection: "row",
   },
-  redBox: { borderTopLeftRadius: 20 },
-  yellowBox: { borderTopRightRadius: 20 },
-  greenBox: { borderBottomLeftRadius: 20 },
-  blueBox: { borderBottomRightRadius: 20 },
+  redBox: { borderTopLeftRadius: 18 },
+  yellowBox: { borderTopRightRadius: 18 },
+  blueBox: { borderBottomLeftRadius: 18 },
+  greenBox: { borderBottomRightRadius: 18 },
 });
