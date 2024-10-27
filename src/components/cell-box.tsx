@@ -2,8 +2,12 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 
-const CellBox = () => {
-  return <View style={styles.container}>{/* <Text>CellBox</Text> */}</View>;
+const CellBox = ({ bgColor }: any) => {
+  return (
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
+      {/* <Text>CellBox</Text> */}
+    </View>
+  );
 };
 
 export default CellBox;
