@@ -18,10 +18,19 @@ interface HorizontalCellsContainerProps {
   setDiceNum: (val: number) => void;
   turn: string;
   setTurn: (val: string) => void;
+  handleDiceRoll: () => void;
 }
 
 const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
-  const { isRolling, setIsRolling, diceNum, setDiceNum, turn, setTurn } = props;
+  const {
+    isRolling,
+    setIsRolling,
+    diceNum,
+    setDiceNum,
+    turn,
+    setTurn,
+    handleDiceRoll,
+  } = props;
 
   const { R1, R2, R3, R4, R5, R14, R15, R16, R17, R18 } = RED_CELLS;
   const { Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13 } = YELLOW_CELLS;
@@ -47,6 +56,9 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
 
   return (
     <View style={styles.container}>
+      <RenderRow leftArr={topLeftArray} rightArr={topRightArray} />
+      <RenderRow leftArr={midLeftArray} rightArr={midRightArray} />
+      <RenderRow leftArr={bottomLeftArray} rightArr={bottomRightArray} />
       <Dice
         isRolling={isRolling}
         setIsRolling={setIsRolling}
@@ -54,10 +66,8 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
         setDiceNum={setDiceNum}
         turn={turn}
         setTurn={setTurn}
+        onDiceRoll={handleDiceRoll}
       />
-      <RenderRow leftArr={topLeftArray} rightArr={topRightArray} />
-      <RenderRow leftArr={midLeftArray} rightArr={midRightArray} />
-      <RenderRow leftArr={bottomLeftArray} rightArr={bottomRightArray} />
     </View>
   );
 };
@@ -90,7 +100,6 @@ const styles = StyleSheet.create({
   },
   cellContainer: {
     flex: 1,
-    // flexDirection: "row",
     borderColor: COLORS.black,
     borderWidth: 1,
   },
