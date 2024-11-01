@@ -16,10 +16,19 @@ interface DiceProps {
   setDiceNum: (val: number) => void;
   turn: string;
   setTurn: (val: string) => void;
+  onDiceRoll: () => void;
 }
 
 const Dice = (props: DiceProps) => {
-  const { isRolling, setIsRolling, diceNum, setDiceNum, turn, setTurn } = props;
+  const {
+    isRolling,
+    setIsRolling,
+    diceNum,
+    setDiceNum,
+    turn,
+    setTurn,
+    onDiceRoll,
+  } = props;
 
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
   const {
@@ -52,7 +61,7 @@ const Dice = (props: DiceProps) => {
   };
 
   return (
-    <View>
+    <View style={styles.diceContainer}>
       <Text style={styles.txtStyle}>Roll Dice</Text>
       {isRolling ? (
         <View style={styles.rolling}>
@@ -60,9 +69,10 @@ const Dice = (props: DiceProps) => {
         </View>
       ) : (
         <TouchableOpacity
-          style={[styles.diceContainer, { backgroundColor: getColor() }]}
+          onPress={onDiceRoll}
+          style={[styles.dice, { backgroundColor: getColor() }]}
         >
-          <RenderDiceSurface face={6} />
+          <RenderDiceSurface face={4} />
         </TouchableOpacity>
       )}
     </View>
@@ -156,8 +166,13 @@ const styles = StyleSheet.create({
   diceContainer: {
     position: "absolute",
     alignSelf: "center",
+    marginTop: 5,
+  },
+  dice: {
+    position: "absolute",
+    alignSelf: "center",
     justifyContent: "center",
-    marginTop: 35,
+    marginTop: 30,
     width: 50,
     height: 50,
     borderRadius: 5,
