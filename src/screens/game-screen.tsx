@@ -633,6 +633,10 @@ const Game = (props: GameProps) => {
     const opacity = turn === player.player ? 1 : 0.6;
     const customStyles = { ...customStyle, opacity };
 
+    const onPieceSelection = (selectedPiece: PieceProps) => {
+      console.log("selectedPiece =>", JSON.stringify(selectedPiece));
+    };
+
     return (
       <PlayerBox
         colorName={color}
@@ -641,6 +645,11 @@ const Game = (props: GameProps) => {
         three={three}
         four={four}
         customStyle={customStyles}
+        onPieceSelection={(selectedPiece) => {
+          if (turn === player.player) {
+            onPieceSelection(selectedPiece);
+          }
+        }}
       />
     );
   };
