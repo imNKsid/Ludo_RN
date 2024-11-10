@@ -630,7 +630,7 @@ const Game = (props: GameProps) => {
     const { color, pieces } = player;
     const { one, two, three, four } = pieces;
 
-    const opacity = turn === player.player ? 1 : 0.6;
+    const opacity = turn === player.player ? 1 : 0.3;
     const customStyles = { ...customStyle, opacity };
 
     const onPieceSelection = (selectedPiece: PieceProps) => {
