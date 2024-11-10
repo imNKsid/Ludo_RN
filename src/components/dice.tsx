@@ -72,7 +72,7 @@ const Dice = (props: DiceProps) => {
           onPress={onDiceRoll}
           style={[styles.dice, { backgroundColor: getColor() }]}
         >
-          <RenderDiceSurface face={4} />
+          <RenderDiceSurface face={diceNum} />
         </TouchableOpacity>
       )}
     </View>
