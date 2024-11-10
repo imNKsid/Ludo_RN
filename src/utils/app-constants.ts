@@ -16,6 +16,7 @@ export const POSITION = {
   HOME: "HOME",
   TOP_VERTICAL: "TOP_VERTICAL",
   BOTTOM_VERTICAL: "BOTTOM_VERTICAL",
+  FINISHED: "FINISHED",
 };
 
 export const RED_CELLS = {
