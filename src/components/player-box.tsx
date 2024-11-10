@@ -1,35 +1,37 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
+import { PieceProps } from "../utils";
 
-interface PlayerProps {
-  color: string;
-  name: string;
-  position: string;
+interface SinglePlayerProps {
+  piece: PieceProps;
+  onPieceSelection: (piece: any) => void;
 }
 
 interface PlayerBoxProps {
   colorName: string;
-  one: PlayerProps;
-  two: PlayerProps;
-  three: PlayerProps;
-  four: PlayerProps;
+  one: PieceProps;
+  two: PieceProps;
+  three: PieceProps;
+  four: PieceProps;
   customStyle?: any;
+  onPieceSelection: (piece: any) => void;
 }
 
 const PlayerBox = (props: PlayerBoxProps) => {
-  const { colorName, one, two, three, four, customStyle } = props;
+  const { colorName, one, two, three, four, customStyle, onPieceSelection } =
+    props;
 
   return (
     <View style={[styles.player, customStyle, { backgroundColor: colorName }]}>
       <View style={styles.innerContainer}>
         <View style={styles.piecesContainer}>
-          <Player piece={one} />
-          <Player piece={two} />
+          <SinglePlayer piece={one} onPieceSelection={onPieceSelection} />
+          <SinglePlayer piece={two} onPieceSelection={onPieceSelection} />
         </View>
         <View style={styles.piecesContainer}>
-          <Player piece={three} />
-          <Player piece={four} />
+          <SinglePlayer piece={three} onPieceSelection={onPieceSelection} />
+          <SinglePlayer piece={four} onPieceSelection={onPieceSelection} />
         </View>
       </View>
     </View>
@@ -38,11 +40,15 @@ const PlayerBox = (props: PlayerBoxProps) => {
 
 export default PlayerBox;
 
-const Player = ({ piece }: { piece: PlayerProps }) => {
+const SinglePlayer = (props: SinglePlayerProps) => {
+  const { piece, onPieceSelection } = props;
   const { color, position } = piece;
 
   return (
-    <TouchableOpacity style={{ flex: 1 }}>
+    <TouchableOpacity
+      style={{ flex: 1 }}
+      onPress={() => onPieceSelection(piece)}
+    >
       <View
         style={[
           styles.pieceStyle,
