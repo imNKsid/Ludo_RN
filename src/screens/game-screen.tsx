@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   BLUE_CELLS,
@@ -56,6 +56,7 @@ const Game = (props: GameProps) => {
   const [turn, setTurn] = useState("");
   const [moves, setMoves] = useState<number[]>([]);
   const [animateForSelection, setAnimateForSelection] = useState(false);
+  const [isWaitingForDiceRoll, setIsWaitingForDiceRoll] = useState(true);
 
   const getUserTurn = () => {
     if (redName !== "") {
@@ -124,6 +125,9 @@ const Game = (props: GameProps) => {
 
   const handleDiceRoll = () => {
     console.log("Dice Pressed");
+    if (animateForSelection) {
+      return;
+    }
     setIsRolling(true);
     setDiceNum(getRandomInt());
     setTimeout(() => {
@@ -133,16 +137,14 @@ const Game = (props: GameProps) => {
 
       if (diceNum === 6) {
         if (moves.length === 3) {
-          setIsRolling(false);
           setMoves([]);
           setTurn(getNextTurn());
         } else {
-          setIsRolling(false);
           setMoves(turns);
         }
       } else {
-        setIsRolling(false);
         setMoves(turns);
+        setIsWaitingForDiceRoll(false);
         const player = { red, yellow, green, blue }[turn] as PlayerProps;
         updatePlayerPieces(player); // Here I've used an object map to retrieve current player's data.
         // "{ red, yellow, green, blue }[turn]" dynamically selects the player data based on the turn value.
@@ -162,6 +164,7 @@ const Game = (props: GameProps) => {
   };
 
   const getNextTurn = () => {
+    setIsWaitingForDiceRoll(true);
     const isYellowNext = yellowName !== "" && !isPlayerFinished(yellow);
     const isGreenNext = greenName !== "" && !isPlayerFinished(green);
     const isBlueNext = blueName !== "" && !isPlayerFinished(blue);
@@ -169,7 +172,8 @@ const Game = (props: GameProps) => {
 
     if (bonusCount > 0) {
       setBonusCount(bonusCount - 1);
-      if (isPlayerFinished({ red, yellow, green, blue }[turn])) {
+      const player = { red, yellow, green, blue }[turn] as PlayerProps;
+      if (isPlayerFinished(player)) {
         return turn;
       }
     }
@@ -181,7 +185,7 @@ const Game = (props: GameProps) => {
           ? GREEN
           : isBlueNext
           ? BLUE
-          : turn;
+          : "";
 
       case YELLOW:
         return isGreenNext ? GREEN : isBlueNext ? BLUE : isRedNext ? RED : "";
@@ -199,7 +203,7 @@ const Game = (props: GameProps) => {
           : "";
 
       default:
-        return "";
+        return turn;
     }
   };
 
@@ -500,14 +504,14 @@ const Game = (props: GameProps) => {
           setMoves([]);
           setTurn(getNextTurn());
         }
-      } else {
-        if (moves.length === 1) {
-          updatePlayerPieces(player);
-        } else if (moves.length === 0 || isPlayerFinished(player)) {
-          setAnimateForSelection(false);
-          setMoves([]);
-          setTurn(getNextTurn());
-        }
+      }
+    } else {
+      if (moves.length === 1) {
+        updatePlayerPieces(player);
+      } else if (moves.length === 0 || isPlayerFinished(player)) {
+        setAnimateForSelection(false);
+        setMoves([]);
+        setTurn(getNextTurn());
       }
     }
   };
@@ -557,26 +561,26 @@ const Game = (props: GameProps) => {
     };
 
     if (
-      checkIfPositionMatchesExistingPiece(piece, red as PlayerProps) &&
-      piece.color !== (red as PlayerProps).player
+      piece.color !== (red as PlayerProps).player &&
+      checkIfPositionMatchesExistingPiece(piece, red as PlayerProps)
     ) {
       return true;
     }
     if (
-      checkIfPositionMatchesExistingPiece(piece, yellow as PlayerProps) &&
-      piece.color !== (yellow as PlayerProps).player
+      piece.color !== (yellow as PlayerProps).player &&
+      checkIfPositionMatchesExistingPiece(piece, yellow as PlayerProps)
     ) {
       return true;
     }
     if (
-      checkIfPositionMatchesExistingPiece(piece, green as PlayerProps) &&
-      piece.color !== (green as PlayerProps).player
+      piece.color !== (green as PlayerProps).player &&
+      checkIfPositionMatchesExistingPiece(piece, green as PlayerProps)
     ) {
       return true;
     }
     if (
-      checkIfPositionMatchesExistingPiece(piece, blue as PlayerProps) &&
-      piece.color !== (blue as PlayerProps).player
+      piece.color !== (blue as PlayerProps).player &&
+      checkIfPositionMatchesExistingPiece(piece, blue as PlayerProps)
     ) {
       return true;
     }
@@ -593,7 +597,7 @@ const Game = (props: GameProps) => {
             let singlePossibleMove = getSinglePossibleMove(player);
             if (singlePossibleMove?.move) {
               const indexOf = moves.indexOf(singlePossibleMove.move);
-              if (indexOf >= 1) {
+              if (indexOf > -1) {
                 moves.splice(indexOf, 1);
               }
               movePieceByPosition(
@@ -615,13 +619,17 @@ const Game = (props: GameProps) => {
         } else {
           setTurn(getNextTurn());
           setMoves([]);
+          setAnimateForSelection(false);
         }
       } else {
         setTurn(getNextTurn());
         setMoves([]);
+        setAnimateForSelection(false);
       }
     } else {
       setTurn(getNextTurn());
+      setMoves([]);
+      setAnimateForSelection(false);
     }
   };
 
@@ -629,12 +637,146 @@ const Game = (props: GameProps) => {
     const { player, customStyle } = props;
     const { color, pieces } = player;
     const { one, two, three, four } = pieces;
+    // console.log("player =>", player);
 
     const opacity = turn === player.player ? 1 : 0.3;
     const customStyles = { ...customStyle, opacity };
+    let hasSix = moves.filter((move) => move === 6).length > 0;
+
+    const isMovePossibleForPosition = (position: string, move: number) => {
+      let isMovePossible = false;
+      let positionToCheckFor = parseInt(position.substring(1, position.length));
+
+      let possiblePosition =
+        move === 1
+          ? 18
+          : move === 2
+          ? 17
+          : move === 3
+          ? 16
+          : move === 4
+          ? 15
+          : move === 5
+          ? 16
+          : undefined;
+
+      if (possiblePosition) {
+        isMovePossible = positionToCheckFor <= possiblePosition;
+      } else if (move === 6 && positionToCheckFor < 14) {
+        isMovePossible = true;
+      }
+      return isMovePossible;
+    };
 
     const onPieceSelection = (selectedPiece: PieceProps) => {
-      console.log("selectedPiece =>", JSON.stringify(selectedPiece));
+      if (isWaitingForDiceRoll) {
+        return;
+      }
+
+      const player = { red, yellow, green, blue }[turn] as PlayerProps;
+      const { one, two, three, four } = player.pieces;
+
+      if (moves.length === 1) {
+        if (selectedPiece.position === HOME && moves[0] !== 6) {
+          return;
+        }
+        const move = moves.shift();
+        if (move !== undefined) {
+          movePieceByPosition(selectedPiece, move);
+        }
+      } else if (moves.length > 1) {
+        if (selectedPiece.position === HOME) {
+          moves.shift();
+          selectedPiece.position =
+            selectedPiece.color === RED
+              ? R1
+              : selectedPiece.color === YELLOW
+              ? Y1
+              : selectedPiece.color === GREEN
+              ? G1
+              : selectedPiece.color === BLUE
+              ? B1
+              : "";
+          selectedPiece.updateTime = new Date().getTime();
+
+          if (moves.length === 1) {
+            if (playerHasOptionsForMoves(player)) {
+              const move = moves.shift();
+              if (move !== undefined) {
+                movePieceByPosition(selectedPiece, move);
+              }
+            } else {
+              const isActivePiece = (piece: PieceProps) =>
+                piece.position !== HOME && piece.position !== FINISHED;
+
+              let activePieces = [];
+              isActivePiece(one) ? activePieces.push(one) : undefined;
+              isActivePiece(two) ? activePieces.push(two) : undefined;
+              isActivePiece(three) ? activePieces.push(three) : undefined;
+              isActivePiece(four) ? activePieces.push(four) : undefined;
+
+              let isSamePositionForAllActivePieces = activePieces.every(
+                (piece: PieceProps) =>
+                  piece.position === activePieces[0].position
+              );
+              if (isSamePositionForAllActivePieces) {
+                const move = moves.shift();
+                if (move !== undefined) {
+                  movePieceByPosition(selectedPiece, move);
+                }
+              }
+            }
+          }
+        } else {
+          const onMoveSelected = (selectedMove: string) => {
+            if (
+              isMovePossibleForPosition(
+                selectedPiece.position,
+                parseInt(selectedMove)
+              )
+            ) {
+              const index = moves.indexOf(parseInt(selectedMove));
+              if (index > -1) {
+                moves.splice(index, 1);
+              }
+              movePieceByPosition(selectedPiece, parseInt(selectedMove));
+            } else {
+              Alert.alert("Move not possible");
+            }
+          };
+
+          let moveOptions = [];
+          let optionOne = moves[0].toString();
+          moveOptions.push({
+            text: optionOne,
+            onPress: () => {
+              onMoveSelected(optionOne);
+            },
+          });
+          let optionTwo = moves.length > 1 ? moves[1].toString() : undefined;
+          optionTwo
+            ? moveOptions.push({
+                text: optionTwo,
+                onPress: () => {
+                  onMoveSelected(optionTwo);
+                },
+              })
+            : undefined;
+          let optionThree = moves.length > 2 ? moves[2].toString() : undefined;
+          optionThree
+            ? moveOptions.push({
+                text: optionThree,
+                onPress: () => {
+                  onMoveSelected(optionThree);
+                },
+              })
+            : undefined;
+
+          Alert.alert("Select Your Move", "", moveOptions, {
+            cancelable: true,
+          });
+        }
+      }
     };
 
     return (
@@ -645,6 +787,9 @@ const Game = (props: GameProps) => {
         three={three}
         four={four}
         customStyle={customStyles}
+        animateForSelection={
+          animateForSelection && turn === player.player && hasSix
+        }
         onPieceSelection={(selectedPiece) => {
           if (turn === player.player) {
             onPieceSelection(selectedPiece);
