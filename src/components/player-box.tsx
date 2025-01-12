@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { COLORS } from "../assets";
 import { PieceProps } from "../utils";
 
@@ -15,15 +15,53 @@ interface PlayerBoxProps {
   three: PieceProps;
   four: PieceProps;
   customStyle?: any;
+  animateForSelection: boolean;
   onPieceSelection: (piece: any) => void;
 }
 
 const PlayerBox = (props: PlayerBoxProps) => {
-  const { colorName, one, two, three, four, customStyle, onPieceSelection } =
-    props;
+  const {
+    colorName,
+    one,
+    two,
+    three,
+    four,
+    customStyle,
+    animateForSelection,
+    onPieceSelection,
+  } = props;
+
+  const [bgColor, setBgColor] = useState(colorName);
+  const [isAnimating, setIsAnimating] = useState(false);
+  // const [intervalId,setIntervalId] = useState(undefined);
+
+  let shouldRenderBackgroundColor = 1;
+
+  const applyAnimationIfNeeded = () => {
+    let intervalId;
+    if (animateForSelection) {
+      if (!isAnimating) {
+        setIsAnimating(true);
+        intervalId = setInterval(() => {
+          shouldRenderBackgroundColor++;
+          shouldRenderBackgroundColor % 2 == 0
+            ? setBgColor(colorName)
+            : setBgColor(COLORS.white);
+        }, 400);
+      }
+    } else {
+      clearInterval(intervalId);
+      if (isAnimating) {
+        setIsAnimating(false);
+        setBgColor(colorName);
+      }
+    }
+  };
+
+  applyAnimationIfNeeded();
 
   return (
-    <View style={[styles.player, customStyle, { backgroundColor: colorName }]}>
+    <View style={[styles.player, customStyle, { backgroundColor: bgColor }]}>
       <View style={styles.innerContainer}>
         <View style={styles.piecesContainer}>
           <SinglePlayer piece={one} onPieceSelection={onPieceSelection} />
@@ -48,6 +86,7 @@ const SinglePlayer = (props: SinglePlayerProps) => {
     <TouchableOpacity
       style={{ flex: 1 }}
       onPress={() => onPieceSelection(piece)}
+      disabled={position === "HOME" ? false : true}
     >
       <View
         style={[
