@@ -10,6 +10,7 @@ import {
 } from "../utils";
 import Dice from "./dice";
 import CellBox from "./cell-box";
+import { PlayerState } from "../utils/interfaces";
 
 interface HorizontalCellsContainerProps {
   isRolling: boolean;
@@ -19,6 +20,7 @@ interface HorizontalCellsContainerProps {
   turn: string;
   setTurn: (val: string) => void;
   handleDiceRoll: () => void;
+  state: PlayerState;
 }
 
 const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
@@ -30,6 +32,7 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
     turn,
     setTurn,
     handleDiceRoll,
+    state,
   } = props;
 
   const { R1, R2, R3, R4, R5, R14, R15, R16, R17, R18 } = RED_CELLS;
@@ -47,9 +50,9 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
   const RenderRow = ({ leftArr, rightArr }: any) => {
     return (
       <View style={styles.rowsContainer}>
-        <RenderCell posArray={leftArr} />
+        <RenderCell posArray={leftArr} state={state} />
         <View style={{ flex: 3 }} />
-        <RenderCell posArray={rightArr} />
+        <RenderCell posArray={rightArr} state={state} />
       </View>
     );
   };
@@ -74,14 +77,22 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
 
 export default HorizontalCellsContainer;
 
-const RenderCell = ({ posArray }: any) => {
+interface RenderCellProps {
+  posArray: any;
+  state: PlayerState;
+}
+
+const RenderCell = ({ posArray, state }: RenderCellProps) => {
   return (
     <>
-      {posArray.map((item: any) => {
+      {posArray.map((cellPosition: any) => {
         return (
-          <View style={styles.cellContainer} key={item}>
-            {/* <Text>{item}</Text> */}
-            <CellBox bgColor={getCellBgColor(item)} />
+          <View style={styles.cellContainer} key={cellPosition}>
+            <CellBox
+              bgColor={getCellBgColor(cellPosition)}
+              state={state}
+              position={cellPosition}
+            />
           </View>
         );
       })}

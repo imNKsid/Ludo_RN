@@ -5,17 +5,20 @@ import {
   BLUE_CELLS,
   getCellBgColor,
   GREEN_CELLS,
+  PlayerProps,
   RED_CELLS,
   YELLOW_CELLS,
 } from "../utils";
 import CellBox from "./cell-box";
+import { PlayerState } from "../utils/interfaces";
 
 interface VerticalCellsContainerProps {
   position: string;
+  state: PlayerState;
 }
 
 const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
-  const { position } = props;
+  const { position, state } = props;
   const { R6, R7, R8, R9, R10, R11, R12, R13 } = RED_CELLS;
   const { Y1, Y2, Y3, Y4, Y5, Y14, Y15, Y16, Y17, Y18 } = YELLOW_CELLS;
   const { G6, G7, G8, G9, G10, G11, G12, G13 } = GREEN_CELLS;
@@ -36,11 +39,14 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
       ? [R13, Y1, Y2, Y3, Y4, Y5]
       : [G6, G7, G8, G9, G10, G11];
 
-  const renderCell = (item: any) => {
+  const renderCell = (cellPosition: any) => {
     return (
-      <View style={styles.cellContainer} key={item}>
-        {/* <Text>{item}</Text> */}
-        <CellBox bgColor={getCellBgColor(item)} />
+      <View style={styles.cellContainer} key={cellPosition}>
+        <CellBox
+          bgColor={getCellBgColor(cellPosition)}
+          state={state}
+          position={cellPosition}
+        />
       </View>
     );
   };
