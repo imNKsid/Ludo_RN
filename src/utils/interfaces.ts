@@ -1,3 +1,10 @@
+export interface PlayerState {
+  red: PlayerProps;
+  yellow: PlayerProps;
+  green: PlayerProps;
+  blue: PlayerProps;
+}
+
 export interface PlayerProps {
   pieces: PlayerPiecesProps;
   color: string;
