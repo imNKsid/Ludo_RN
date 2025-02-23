@@ -18,6 +18,7 @@ import {
   VerticalCellsContainer,
 } from "../components";
 import { COLORS, IMAGES } from "../assets";
+import { PlayerState } from "../utils/interfaces";
 
 interface GameProps {
   redName: string;
@@ -45,10 +46,10 @@ const Game = (props: GameProps) => {
     bluePlayerColor,
   } = COLORS;
 
-  const [red, setRed] = useState<PlayerProps | {}>({});
-  const [yellow, setYellow] = useState<PlayerProps | {}>({});
-  const [green, setGreen] = useState<PlayerProps | {}>({});
-  const [blue, setBlue] = useState<PlayerProps | {}>({});
+  const [red, setRed] = useState<PlayerProps>();
+  const [yellow, setYellow] = useState<PlayerProps>();
+  const [green, setGreen] = useState<PlayerProps>();
+  const [blue, setBlue] = useState<PlayerProps>();
   const [isLoading, setIsLoading] = useState(true);
   const [isRolling, setIsRolling] = useState(false);
   const [diceNum, setDiceNum] = useState(2);
@@ -799,12 +800,24 @@ const Game = (props: GameProps) => {
     );
   };
 
+  const getPlayerState = () => {
+    const state = red?.pieces &&
+      yellow?.pieces &&
+      green?.pieces &&
+      blue?.pieces && { red, yellow, green, blue };
+
+    return state as PlayerState;
+  };
+
   return (
     <ImageBackground source={IMAGES.home} style={styles.container}>
       <View style={styles.gameContainer}>
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={red} customStyle={styles.redBox} />
-          <VerticalCellsContainer position={TOP_VERTICAL} />
+          <VerticalCellsContainer
+            position={TOP_VERTICAL}
+            state={getPlayerState()}
+          />
           <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
         </View>
         <HorizontalCellsContainer
@@ -815,10 +828,14 @@ const Game = (props: GameProps) => {
           turn={turn}
           setTurn={setTurn}
           handleDiceRoll={handleDiceRoll}
+          state={getPlayerState()}
         />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
-          <VerticalCellsContainer position={BOTTOM_VERTICAL} />
+          <VerticalCellsContainer
+            position={BOTTOM_VERTICAL}
+            state={getPlayerState()}
+          />
           <RenderPlayer player={green} customStyle={styles.greenBox} />
         </View>
       </View>
