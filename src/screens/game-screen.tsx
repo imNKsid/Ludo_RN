@@ -132,7 +132,7 @@ const Game = (props: GameProps) => {
     setIsRolling(true);
     setDiceNum(getRandomInt());
     setTimeout(() => {
-      let turns: any = moves;
+      let turns: number[] = moves;
       turns.push(diceNum);
       setMoves(turns);
 
@@ -634,151 +634,149 @@ const Game = (props: GameProps) => {
     }
   };
 
-  const RenderPlayer = (props: any) => {
-    const { player, customStyle } = props;
-    const { color, pieces } = player;
-    const { one, two, three, four } = pieces;
-    // console.log("player =>", player);
+  const isMovePossibleForPosition = (position: string, move: number) => {
+    let isMovePossible = false;
+    let positionToCheckFor = parseInt(position.substring(1, position.length));
 
-    const opacity = turn === player.player ? 1 : 0.3;
-    const customStyles = { ...customStyle, opacity };
-    let hasSix = moves.filter((move) => move === 6).length > 0;
+    let possiblePosition =
+      move === 1
+        ? 18
+        : move === 2
+        ? 17
+        : move === 3
+        ? 16
+        : move === 4
+        ? 15
+        : move === 5
+        ? 16
+        : undefined;
 
-    const isMovePossibleForPosition = (position: string, move: number) => {
-      let isMovePossible = false;
-      let positionToCheckFor = parseInt(position.substring(1, position.length));
+    if (possiblePosition) {
+      isMovePossible = positionToCheckFor <= possiblePosition;
+    } else if (move === 6 && positionToCheckFor < 14) {
+      isMovePossible = true;
+    }
+    return isMovePossible;
+  };
 
-      let possiblePosition =
-        move === 1
-          ? 18
-          : move === 2
-          ? 17
-          : move === 3
-          ? 16
-          : move === 4
-          ? 15
-          : move === 5
-          ? 16
-          : undefined;
+  const _onPieceSelection = (selectedPiece: PieceProps) => {
+    if (isWaitingForDiceRoll) {
+      return;
+    }
 
-      if (possiblePosition) {
-        isMovePossible = positionToCheckFor <= possiblePosition;
-      } else if (move === 6 && positionToCheckFor < 14) {
-        isMovePossible = true;
-      }
-      return isMovePossible;
-    };
+    const player = { red, yellow, green, blue }[turn] as PlayerProps;
+    const { one, two, three, four } = player.pieces;
 
-    const onPieceSelection = (selectedPiece: PieceProps) => {
-      if (isWaitingForDiceRoll) {
+    if (moves.length === 1) {
+      if (selectedPiece.position === HOME && moves[0] !== 6) {
         return;
       }
+      const move = moves.shift();
+      if (move !== undefined) {
+        movePieceByPosition(selectedPiece, move);
+      }
+    } else if (moves.length > 1) {
+      if (selectedPiece.position === HOME) {
+        moves.shift();
+        selectedPiece.position =
+          selectedPiece.color === RED
+            ? R1
+            : selectedPiece.color === YELLOW
+            ? Y1
+            : selectedPiece.color === GREEN
+            ? G1
+            : selectedPiece.color === BLUE
+            ? B1
+            : "";
+        selectedPiece.updateTime = new Date().getTime();
 
-      const player = { red, yellow, green, blue }[turn] as PlayerProps;
-      const { one, two, three, four } = player.pieces;
+        if (moves.length === 1) {
+          if (playerHasOptionsForMoves(player)) {
+            const move = moves.shift();
+            if (move !== undefined) {
+              movePieceByPosition(selectedPiece, move);
+            }
+          } else {
+            const isActivePiece = (piece: PieceProps) =>
+              piece.position !== HOME && piece.position !== FINISHED;
 
-      if (moves.length === 1) {
-        if (selectedPiece.position === HOME && moves[0] !== 6) {
-          return;
-        }
-        const move = moves.shift();
-        if (move !== undefined) {
-          movePieceByPosition(selectedPiece, move);
-        }
-      } else if (moves.length > 1) {
-        if (selectedPiece.position === HOME) {
-          moves.shift();
-          selectedPiece.position =
-            selectedPiece.color === RED
-              ? R1
-              : selectedPiece.color === YELLOW
-              ? Y1
-              : selectedPiece.color === GREEN
-              ? G1
-              : selectedPiece.color === BLUE
-              ? B1
-              : "";
-          selectedPiece.updateTime = new Date().getTime();
+            let activePieces = [];
+            isActivePiece(one) ? activePieces.push(one) : undefined;
+            isActivePiece(two) ? activePieces.push(two) : undefined;
+            isActivePiece(three) ? activePieces.push(three) : undefined;
+            isActivePiece(four) ? activePieces.push(four) : undefined;
 
-          if (moves.length === 1) {
-            if (playerHasOptionsForMoves(player)) {
+            let isSamePositionForAllActivePieces = activePieces.every(
+              (piece: PieceProps) => piece.position === activePieces[0].position
+            );
+            if (isSamePositionForAllActivePieces) {
               const move = moves.shift();
               if (move !== undefined) {
                 movePieceByPosition(selectedPiece, move);
               }
-            } else {
-              const isActivePiece = (piece: PieceProps) =>
-                piece.position !== HOME && piece.position !== FINISHED;
-
-              let activePieces = [];
-              isActivePiece(one) ? activePieces.push(one) : undefined;
-              isActivePiece(two) ? activePieces.push(two) : undefined;
-              isActivePiece(three) ? activePieces.push(three) : undefined;
-              isActivePiece(four) ? activePieces.push(four) : undefined;
-
-              let isSamePositionForAllActivePieces = activePieces.every(
-                (piece: PieceProps) =>
-                  piece.position === activePieces[0].position
-              );
-              if (isSamePositionForAllActivePieces) {
-                const move = moves.shift();
-                if (move !== undefined) {
-                  movePieceByPosition(selectedPiece, move);
-                }
-              }
             }
           }
-        } else {
-          const onMoveSelected = (selectedMove: string) => {
-            if (
-              isMovePossibleForPosition(
-                selectedPiece.position,
-                parseInt(selectedMove)
-              )
-            ) {
-              const index = moves.indexOf(parseInt(selectedMove));
-              if (index > -1) {
-                moves.splice(index, 1);
-              }
-              movePieceByPosition(selectedPiece, parseInt(selectedMove));
-            } else {
-              Alert.alert("Move not possible");
-            }
-          };
-
-          let moveOptions = [];
-          let optionOne = moves[0].toString();
-          moveOptions.push({
-            text: optionOne,
-            onPress: () => {
-              onMoveSelected(optionOne);
-            },
-          });
-          let optionTwo = moves.length > 1 ? moves[1].toString() : undefined;
-          optionTwo
-            ? moveOptions.push({
-                text: optionTwo,
-                onPress: () => {
-                  onMoveSelected(optionTwo);
-                },
-              })
-            : undefined;
-          let optionThree = moves.length > 2 ? moves[2].toString() : undefined;
-          optionThree
-            ? moveOptions.push({
-                text: optionThree,
-                onPress: () => {
-                  onMoveSelected(optionThree);
-                },
-              })
-            : undefined;
-
-          Alert.alert("Select Your Move", "", moveOptions, {
-            cancelable: true,
-          });
         }
+      } else {
+        const onMoveSelected = (selectedMove: string) => {
+          if (
+            isMovePossibleForPosition(
+              selectedPiece.position,
+              parseInt(selectedMove)
+            )
+          ) {
+            const index = moves.indexOf(parseInt(selectedMove));
+            if (index > -1) {
+              moves.splice(index, 1);
+            }
+            movePieceByPosition(selectedPiece, parseInt(selectedMove));
+          } else {
+            Alert.alert("Move not possible");
+          }
+        };
+
+        let moveOptions = [];
+        let optionOne = moves[0].toString();
+        moveOptions.push({
+          text: optionOne,
+          onPress: () => {
+            onMoveSelected(optionOne);
+          },
+        });
+        let optionTwo = moves.length > 1 ? moves[1].toString() : undefined;
+        optionTwo
+          ? moveOptions.push({
+              text: optionTwo,
+              onPress: () => {
+                onMoveSelected(optionTwo);
+              },
+            })
+          : undefined;
+        let optionThree = moves.length > 2 ? moves[2].toString() : undefined;
+        optionThree
+          ? moveOptions.push({
+              text: optionThree,
+              onPress: () => {
+                onMoveSelected(optionThree);
+              },
+            })
+          : undefined;
+
+        Alert.alert("Select Your Move", "", moveOptions, {
+          cancelable: true,
+        });
       }
-    };
+    }
+  };
+
+  const RenderPlayer = (props: any) => {
+    const { player, customStyle } = props;
+    const { color, pieces } = player;
+    const { one, two, three, four } = pieces;
+
+    const opacity = turn === player.player ? 1 : 0.3;
+    const customStyles = { ...customStyle, opacity };
+    let hasSix = moves.filter((move) => move === 6).length > 0;
 
     return (
       <PlayerBox
@@ -793,7 +791,7 @@ const Game = (props: GameProps) => {
         }
         onPieceSelection={(selectedPiece) => {
           if (turn === player.player) {
-            onPieceSelection(selectedPiece);
+            _onPieceSelection(selectedPiece);
           }
         }}
       />
@@ -817,6 +815,12 @@ const Game = (props: GameProps) => {
           <VerticalCellsContainer
             position={TOP_VERTICAL}
             state={getPlayerState()}
+            turn={turn}
+            moves={moves}
+            isWaitingForDiceRoll={isWaitingForDiceRoll}
+            onPieceSelection={(selectedPiece: PieceProps) => {
+              _onPieceSelection(selectedPiece);
+            }}
           />
           <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
         </View>
@@ -829,12 +833,23 @@ const Game = (props: GameProps) => {
           setTurn={setTurn}
           handleDiceRoll={handleDiceRoll}
           state={getPlayerState()}
+          moves={moves}
+          isWaitingForDiceRoll={isWaitingForDiceRoll}
+          onPieceSelection={(selectedPiece: PieceProps) => {
+            _onPieceSelection(selectedPiece);
+          }}
         />
         <View style={styles.twoPlayersContainer}>
           <RenderPlayer player={blue} customStyle={styles.blueBox} />
           <VerticalCellsContainer
             position={BOTTOM_VERTICAL}
             state={getPlayerState()}
+            turn={turn}
+            moves={moves}
+            isWaitingForDiceRoll={isWaitingForDiceRoll}
+            onPieceSelection={(selectedPiece: PieceProps) => {
+              _onPieceSelection(selectedPiece);
+            }}
           />
           <RenderPlayer player={green} customStyle={styles.greenBox} />
         </View>
