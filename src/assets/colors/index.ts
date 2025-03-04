@@ -14,4 +14,5 @@ export const COLORS = {
   bluePlayerColor: "#00F",
   blueFieldBorder: "#4E4EF5",
   blueField: "#DDF",
+  grey: "#999",
 };
