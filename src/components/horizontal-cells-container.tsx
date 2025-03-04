@@ -10,7 +10,7 @@ import {
 } from "../utils";
 import Dice from "./dice";
 import CellBox from "./cell-box";
-import { PlayerState } from "../utils/interfaces";
+import { PieceProps, PlayerState } from "../utils/interfaces";
 
 interface HorizontalCellsContainerProps {
   isRolling: boolean;
@@ -21,6 +21,17 @@ interface HorizontalCellsContainerProps {
   setTurn: (val: string) => void;
   handleDiceRoll: () => void;
   state: PlayerState;
+  moves: number[];
+  isWaitingForDiceRoll: boolean;
+  onPieceSelection: (selectedPiece: PieceProps) => void;
+}
+
+interface RenderRowProps {
+  leftArr: any;
+  rightArr: any;
+  moves: number[];
+  isWaitingForDiceRoll: boolean;
+  onPieceSelection: (selectedPiece: PieceProps) => void;
 }
 
 const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
@@ -33,6 +44,9 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
     setTurn,
     handleDiceRoll,
     state,
+    moves,
+    isWaitingForDiceRoll,
+    onPieceSelection,
   } = props;
 
   const { R1, R2, R3, R4, R5, R14, R15, R16, R17, R18 } = RED_CELLS;
@@ -47,21 +61,58 @@ const HorizontalCellsContainer = (props: HorizontalCellsContainerProps) => {
   const midRightArray = [G18, G17, G16, G15, G14, Y12];
   const bottomRightArray = [G5, G4, G3, G2, G1, Y13];
 
-  const RenderRow = ({ leftArr, rightArr }: any) => {
+  const RenderRow = ({
+    leftArr,
+    rightArr,
+    moves,
+    onPieceSelection,
+  }: RenderRowProps) => {
     return (
       <View style={styles.rowsContainer}>
-        <RenderCell posArray={leftArr} state={state} />
+        <RenderCell
+          posArray={leftArr}
+          state={state}
+          turn={turn}
+          moves={moves}
+          isWaitingForDiceRoll={isWaitingForDiceRoll}
+          onPieceSelection={onPieceSelection}
+        />
         <View style={{ flex: 3 }} />
-        <RenderCell posArray={rightArr} state={state} />
+        <RenderCell
+          posArray={rightArr}
+          state={state}
+          turn={turn}
+          moves={moves}
+          isWaitingForDiceRoll={isWaitingForDiceRoll}
+          onPieceSelection={onPieceSelection}
+        />
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <RenderRow leftArr={topLeftArray} rightArr={topRightArray} />
-      <RenderRow leftArr={midLeftArray} rightArr={midRightArray} />
-      <RenderRow leftArr={bottomLeftArray} rightArr={bottomRightArray} />
+      <RenderRow
+        leftArr={topLeftArray}
+        rightArr={topRightArray}
+        moves={moves}
+        isWaitingForDiceRoll={isWaitingForDiceRoll}
+        onPieceSelection={onPieceSelection}
+      />
+      <RenderRow
+        leftArr={midLeftArray}
+        rightArr={midRightArray}
+        moves={moves}
+        isWaitingForDiceRoll={isWaitingForDiceRoll}
+        onPieceSelection={onPieceSelection}
+      />
+      <RenderRow
+        leftArr={bottomLeftArray}
+        rightArr={bottomRightArray}
+        moves={moves}
+        isWaitingForDiceRoll={isWaitingForDiceRoll}
+        onPieceSelection={onPieceSelection}
+      />
       <Dice
         isRolling={isRolling}
         setIsRolling={setIsRolling}
@@ -80,9 +131,20 @@ export default HorizontalCellsContainer;
 interface RenderCellProps {
   posArray: any;
   state: PlayerState;
+  turn: string;
+  moves: number[];
+  isWaitingForDiceRoll: boolean;
+  onPieceSelection: (selectedPiece: PieceProps) => void;
 }
 
-const RenderCell = ({ posArray, state }: RenderCellProps) => {
+const RenderCell = ({
+  posArray,
+  state,
+  turn,
+  moves,
+  isWaitingForDiceRoll,
+  onPieceSelection,
+}: RenderCellProps) => {
   return (
     <>
       {posArray.map((cellPosition: any) => {
@@ -92,6 +154,10 @@ const RenderCell = ({ posArray, state }: RenderCellProps) => {
               bgColor={getCellBgColor(cellPosition)}
               state={state}
               position={cellPosition}
+              turn={turn}
+              moves={moves}
+              isWaitingForDiceRoll={isWaitingForDiceRoll}
+              onPieceSelection={onPieceSelection}
             />
           </View>
         );

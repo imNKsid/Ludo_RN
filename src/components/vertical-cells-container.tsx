@@ -10,15 +10,26 @@ import {
   YELLOW_CELLS,
 } from "../utils";
 import CellBox from "./cell-box";
-import { PlayerState } from "../utils/interfaces";
+import { PieceProps, PlayerState } from "../utils/interfaces";
 
 interface VerticalCellsContainerProps {
   position: string;
   state: PlayerState;
+  turn: string;
+  moves: number[];
+  isWaitingForDiceRoll: boolean;
+  onPieceSelection: (selectedPiece: PieceProps) => void;
 }
 
 const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
-  const { position, state } = props;
+  const {
+    position,
+    state,
+    turn,
+    moves,
+    isWaitingForDiceRoll,
+    onPieceSelection,
+  } = props;
   const { R6, R7, R8, R9, R10, R11, R12, R13 } = RED_CELLS;
   const { Y1, Y2, Y3, Y4, Y5, Y14, Y15, Y16, Y17, Y18 } = YELLOW_CELLS;
   const { G6, G7, G8, G9, G10, G11, G12, G13 } = GREEN_CELLS;
@@ -46,6 +57,10 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
           bgColor={getCellBgColor(cellPosition)}
           state={state}
           position={cellPosition}
+          turn={turn}
+          moves={moves}
+          isWaitingForDiceRoll={isWaitingForDiceRoll}
+          onPieceSelection={onPieceSelection}
         />
       </View>
     );
