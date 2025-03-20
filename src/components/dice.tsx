@@ -11,24 +11,13 @@ import { PLAYER } from "../utils";
 
 interface DiceProps {
   isRolling: boolean;
-  setIsRolling: (val: boolean) => void;
   diceNum: number;
-  setDiceNum: (val: number) => void;
   turn: string;
-  setTurn: (val: string) => void;
   onDiceRoll: () => void;
 }
 
 const Dice = (props: DiceProps) => {
-  const {
-    isRolling,
-    setIsRolling,
-    diceNum,
-    setDiceNum,
-    turn,
-    setTurn,
-    onDiceRoll,
-  } = props;
+  const { isRolling, diceNum, turn, onDiceRoll } = props;
 
   const { RED, YELLOW, GREEN, BLUE } = PLAYER;
   const {

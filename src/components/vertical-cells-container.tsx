@@ -1,27 +1,27 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { memo } from "react";
 import { COLORS } from "../assets";
 import {
   BLUE_CELLS,
   getCellBgColor,
   GREEN_CELLS,
-  PlayerProps,
   RED_CELLS,
   YELLOW_CELLS,
 } from "../utils";
 import CellBox from "./cell-box";
-import { PieceProps, PlayerState } from "../utils/interfaces";
+import { PlayerStateEntity } from "../entities/PlayerStateEntity";
+import { PieceEntity } from "../entities/PieceEntity";
 
 interface VerticalCellsContainerProps {
   position: string;
-  state: PlayerState;
+  state: PlayerStateEntity;
   turn: string;
   moves: number[];
   isWaitingForDiceRoll: boolean;
-  onPieceSelection: (selectedPiece: PieceProps) => void;
+  onPieceSelection: (selectedPiece: PieceEntity) => void;
 }
 
-const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
+const VerticalCellsContainer = memo((props: VerticalCellsContainerProps) => {
   const {
     position,
     state,
@@ -79,9 +79,20 @@ const VerticalCellsContainer = (props: VerticalCellsContainerProps) => {
       </View>
     </View>
   );
-};
+});
 
-export default VerticalCellsContainer;
+// export default VerticalCellsContainer;
+
+// Providing a custom comparison function to optimize memoization
+export default memo(VerticalCellsContainer, (prevProps, nextProps) => {
+  return (
+    prevProps.position === nextProps.position &&
+    prevProps.state === nextProps.state &&
+    prevProps.turn === nextProps.turn &&
+    prevProps.isWaitingForDiceRoll === nextProps.isWaitingForDiceRoll &&
+    JSON.stringify(prevProps.moves) === JSON.stringify(nextProps.moves)
+  );
+});
 
 const styles = StyleSheet.create({
   container: {

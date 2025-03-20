@@ -9,7 +9,6 @@ import {
 } from "./app-constants";
 import { getCellBgColor } from "./app-utils";
 import { WindowDimensions, isAndroid, isIOS } from "./global-constants";
-import { PlayerProps, PlayerPiecesProps, PieceProps } from "./interfaces";
 
 export {
   PLAYER,
@@ -24,4 +23,3 @@ export {
   isIOS,
   getCellBgColor,
 };
-export type { PlayerProps, PlayerPiecesProps, PieceProps };

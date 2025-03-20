@@ -3,10 +3,8 @@ import React, { useEffect, useState } from "react";
 import {
   BLUE_CELLS,
   GREEN_CELLS,
-  PieceProps,
   PLAYER,
   PLAYER_COUNT,
-  PlayerProps,
   POSITION,
   RED_CELLS,
   WindowDimensions,
@@ -14,11 +12,13 @@ import {
 } from "../utils";
 import {
   HorizontalCellsContainer,
-  PlayerBox,
   VerticalCellsContainer,
 } from "../components";
 import { COLORS, IMAGES } from "../assets";
-import { PlayerState } from "../utils/interfaces";
+import PlayerContainer from "../components/player-container";
+import { defaultPlayerState } from "../entities/PlayerStateEntity";
+import { PlayerEntity } from "../entities/PlayerEntity";
+import { PieceEntity } from "../entities/PieceEntity";
 
 interface GameProps {
   redName: string;
@@ -46,42 +46,30 @@ const Game = (props: GameProps) => {
     bluePlayerColor,
   } = COLORS;
 
-  const [red, setRed] = useState<PlayerProps>();
-  const [yellow, setYellow] = useState<PlayerProps>();
-  const [green, setGreen] = useState<PlayerProps>();
-  const [blue, setBlue] = useState<PlayerProps>();
+  const [red, setRed] = useState<PlayerEntity>(defaultPlayerState.red);
+  const [yellow, setYellow] = useState<PlayerEntity>(defaultPlayerState.yellow);
+  const [green, setGreen] = useState<PlayerEntity>(defaultPlayerState.green);
+  const [blue, setBlue] = useState<PlayerEntity>(defaultPlayerState.blue);
   const [isLoading, setIsLoading] = useState(true);
   const [isRolling, setIsRolling] = useState(false);
-  const [diceNum, setDiceNum] = useState(2);
+  const [diceNum, setDiceNum] = useState(0);
   const [bonusCount, setBonusCount] = useState(0);
   const [turn, setTurn] = useState("");
   const [moves, setMoves] = useState<number[]>([]);
-  const [animateForSelection, setAnimateForSelection] = useState(false);
-  const [isWaitingForDiceRoll, setIsWaitingForDiceRoll] = useState(true);
-
-  const getUserTurn = () => {
-    if (redName !== "") {
-      return RED;
-    }
-    if (yellowName !== "") {
-      return YELLOW;
-    }
-    if (greenName !== "") {
-      return GREEN;
-    }
-    if (blueName !== "") {
-      return BLUE;
-    }
-    return "";
-  };
+  const [shouldAnimateForSelection, setShouldAnimateForSelection] =
+    useState(false);
+  const [isWaitingForDiceRoll, setIsWaitingForDiceRoll] = useState(false);
 
   useEffect(() => {
     const redPlayer = initPlayer(RED, redPlayerColor);
     setRed(redPlayer);
+
     const yellowPlayer = initPlayer(YELLOW, yellowPlayerColor);
     setYellow(yellowPlayer);
+
     const greenPlayer = initPlayer(GREEN, greenPlayerColor);
     setGreen(greenPlayer);
+
     const bluePlayer = initPlayer(BLUE, bluePlayerColor);
     setBlue(bluePlayer);
 
@@ -105,30 +93,23 @@ const Game = (props: GameProps) => {
     return {
       one: { position: HOME, name: ONE, color: playerColor, updateTime: time },
       two: { position: HOME, name: TWO, color: playerColor, updateTime: time },
-      three: {
-        position: HOME,
-        name: THREE,
-        color: playerColor,
-        updateTime: time,
-      },
-      four: {
-        position: HOME,
-        name: FOUR,
-        color: playerColor,
-        updateTime: time,
-      },
+      three: { position: HOME, name: THREE, color: playerColor, updateTime: time} /* prettier-ignore */,
+      four: { position: HOME, name: FOUR, color: playerColor, updateTime: time} /* prettier-ignore */,
     };
   };
 
-  if (isLoading) {
-    return <Text>Loading...</Text>; // Or a loading spinner
-  }
+  const getUserTurn = () => {
+    if (redName !== "") return RED;
+    if (yellowName !== "") return YELLOW;
+    if (greenName !== "") return GREEN;
+    if (blueName !== "") return BLUE;
+    return "";
+  };
 
-  const handleDiceRoll = () => {
+  const _handleDiceRoll = () => {
     console.log("Dice Pressed");
-    if (animateForSelection) {
-      return;
-    }
+    if (shouldAnimateForSelection) return;
+
     setIsRolling(true);
     setDiceNum(getRandomInt());
     setTimeout(() => {
@@ -138,15 +119,16 @@ const Game = (props: GameProps) => {
 
       if (diceNum === 6) {
         if (moves.length === 3) {
+          //When 3 consecutive sixes come, then set moves as blank & next user's turn will come
           setMoves([]);
           setTurn(getNextTurn());
         } else {
-          setMoves(turns);
+          setMoves(moves);
         }
       } else {
-        setMoves(turns);
         setIsWaitingForDiceRoll(false);
-        const player = { red, yellow, green, blue }[turn] as PlayerProps;
+        setMoves(moves);
+        const player = { red, yellow, green, blue }[turn] as PlayerEntity;
         updatePlayerPieces(player); // Here I've used an object map to retrieve current player's data.
         // "{ red, yellow, green, blue }[turn]" dynamically selects the player data based on the turn value.
       }
@@ -165,7 +147,7 @@ const Game = (props: GameProps) => {
   };
 
   const getNextTurn = () => {
-    setIsWaitingForDiceRoll(true);
+    // setIsWaitingForDiceRoll(true);
     const isYellowNext = yellowName !== "" && !isPlayerFinished(yellow);
     const isGreenNext = greenName !== "" && !isPlayerFinished(green);
     const isBlueNext = blueName !== "" && !isPlayerFinished(blue);
@@ -173,20 +155,14 @@ const Game = (props: GameProps) => {
 
     if (bonusCount > 0) {
       setBonusCount(bonusCount - 1);
-      const player = { red, yellow, green, blue }[turn] as PlayerProps;
+      const player = { red, yellow, green, blue }[turn] as PlayerEntity;
       if (isPlayerFinished(player)) {
         return turn;
       }
     }
     switch (turn) {
       case RED:
-        return isYellowNext
-          ? YELLOW
-          : isGreenNext
-          ? GREEN
-          : isBlueNext
-          ? BLUE
-          : "";
+        return isYellowNext ? YELLOW : isGreenNext ? GREEN : isBlueNext ? BLUE : ""; /* prettier-ignore */
 
       case YELLOW:
         return isGreenNext ? GREEN : isBlueNext ? BLUE : isRedNext ? RED : "";
@@ -195,36 +171,33 @@ const Game = (props: GameProps) => {
         return isBlueNext ? BLUE : isRedNext ? RED : isYellowNext ? YELLOW : "";
 
       case BLUE:
-        return isRedNext
-          ? RED
-          : isYellowNext
-          ? YELLOW
-          : isGreenNext
-          ? GREEN
-          : "";
+        return isRedNext ? RED : isYellowNext ? YELLOW : isGreenNext ? GREEN : ""; /* prettier-ignore */
 
       default:
         return turn;
     }
   };
 
-  const playerHasOptionsForMoves = (player: PlayerProps) => {
+  const playerHasOptionsForMoves = (player: PlayerEntity) => {
     let countMoveOptions = getCountMoveOptions(player);
     return countMoveOptions > 1;
   };
 
-  const getCountMoveOptions = (player: any) => {
+  const playerHasSinglePossibleMove = (player: PlayerEntity) => {
+    const countMoveOptions = getCountMoveOptions(player);
+    return countMoveOptions === 1;
+  };
+
+  const getCountMoveOptions = (player: PlayerEntity) => {
     const { one, two, three, four } = player.pieces;
     let hasSix = moves.filter((move) => move === 6).length > 0;
 
-    const isMovePossibleForPosition = (position: any) => {
+    const isMovePossibleForPosition = (position: string) => {
       if (position === FINISHED) {
         return false;
       }
       if (position === HOME) {
-        if (hasSix) {
-          return true;
-        }
+        if (hasSix) return true;
         return false;
       }
 
@@ -257,17 +230,12 @@ const Game = (props: GameProps) => {
     };
 
     let countOfOptions = 0;
-    isMovePossibleForPosition(one.position) ? countOfOptions + 1 : undefined;
-    isMovePossibleForPosition(two.position) ? countOfOptions + 1 : undefined;
-    isMovePossibleForPosition(three.position) ? countOfOptions + 1 : undefined;
-    isMovePossibleForPosition(four.position) ? countOfOptions + 1 : undefined;
+    if (isMovePossibleForPosition(one.position)) countOfOptions++;
+    if (isMovePossibleForPosition(two.position)) countOfOptions++;
+    if (isMovePossibleForPosition(three.position)) countOfOptions++;
+    if (isMovePossibleForPosition(four.position)) countOfOptions++;
 
     return countOfOptions;
-  };
-
-  const playerHasSinglePossibleMove = (player: PlayerProps) => {
-    const countMoveOptions = getCountMoveOptions(player);
-    return countMoveOptions === 1;
   };
 
   const playerHasSingleUnfinishedPiece = (player: any) => {
@@ -288,13 +256,10 @@ const Game = (props: GameProps) => {
     let possibleMove;
 
     const isMovePossibleForPosition = (position: any) => {
-      if (position === FINISHED) {
-        return false;
-      }
+      if (position === FINISHED) return false;
+
       if (position === HOME) {
-        if (hasSix) {
-          return true;
-        }
+        if (hasSix) return true;
         return false;
       }
 
@@ -362,13 +327,10 @@ const Game = (props: GameProps) => {
     let hasSix = moves.filter((move) => move === 6).length > 0;
 
     const isMovePossibleForPosition = (position: any) => {
-      if (position === FINISHED) {
-        return false;
-      }
+      if (position === FINISHED) return false;
+
       if (position === HOME) {
-        if (hasSix) {
-          return true;
-        }
+        if (hasSix) return true;
         return false;
       }
 
@@ -400,44 +362,40 @@ const Game = (props: GameProps) => {
       return isMovePossible;
     };
 
-    if (isMovePossibleForPosition(one.position)) {
-      return one;
-    }
-    if (isMovePossibleForPosition(two.position)) {
-      return two;
-    }
-    if (isMovePossibleForPosition(three.position)) {
-      return three;
-    }
-    if (isMovePossibleForPosition(four.position)) {
-      return four;
-    }
+    if (isMovePossibleForPosition(one.position)) return one;
+
+    if (isMovePossibleForPosition(two.position)) return two;
+
+    if (isMovePossibleForPosition(three.position)) return three;
+
+    if (isMovePossibleForPosition(four.position)) return four;
+
     return undefined;
   };
 
   // Function for moving the pieces in the board
-  const movePieceByPosition = (piece: PieceProps, move: number) => {
+  const movePieceByPosition = (piece: PieceEntity, move: number) => {
     let newPosition = "";
     let position = parseInt(piece.position.substring(1, piece.position.length));
     let cellAreaIndicator = piece.position.substring(0, 1);
 
     if (piece.position === HOME && move === 6) {
       newPosition =
-        piece.color === RED
+        piece.color === redPlayerColor
           ? R1
-          : piece.color === YELLOW
+          : piece.color === yellowPlayerColor
           ? Y1
-          : piece.color === GREEN
+          : piece.color === greenPlayerColor
           ? G1
-          : piece.color === BLUE
+          : piece.color === bluePlayerColor
           ? B1
           : "";
     } else if (position <= 13) {
       if (
-        (cellAreaIndicator === "B" && piece.color === RED) ||
-        (cellAreaIndicator === "R" && piece.color === YELLOW) ||
-        (cellAreaIndicator === "Y" && piece.color === GREEN) ||
-        (cellAreaIndicator === "G" && piece.color === BLUE)
+        (cellAreaIndicator === "B" && piece.color === redPlayerColor) ||
+        (cellAreaIndicator === "R" && piece.color === yellowPlayerColor) ||
+        (cellAreaIndicator === "Y" && piece.color === greenPlayerColor) ||
+        (cellAreaIndicator === "G" && piece.color === bluePlayerColor)
       ) {
         if (position + move <= 12) {
           newPosition = cellAreaIndicator + position + move;
@@ -492,7 +450,8 @@ const Game = (props: GameProps) => {
       piece.position = newPosition;
       piece.updateTime = new Date().getTime();
     }
-    const player = { red, yellow, green, blue }[turn] as PlayerProps;
+
+    const player = { red, yellow, green, blue }[turn] as PlayerEntity;
 
     if (player && !isPlayerFinished(player)) {
       if (didGetBonusWithNewPosition(piece)) {
@@ -501,26 +460,24 @@ const Game = (props: GameProps) => {
         if (moves.length === 1) {
           updatePlayerPieces(player);
         } else if (moves.length === 0 || isPlayerFinished(player)) {
-          setAnimateForSelection(false);
+          setShouldAnimateForSelection(false);
+          setMoves([]);
+          setTurn(getNextTurn());
+        }
+      } else {
+        if (moves.length === 1) {
+          updatePlayerPieces(player);
+        } else if (moves.length === 0 || isPlayerFinished(player)) {
+          setShouldAnimateForSelection(false);
           setMoves([]);
           setTurn(getNextTurn());
         }
       }
-    } else {
-      if (moves.length === 1) {
-        updatePlayerPieces(player);
-      } else if (moves.length === 0 || isPlayerFinished(player)) {
-        setAnimateForSelection(false);
-        setMoves([]);
-        setTurn(getNextTurn());
-      }
     }
   };
 
-  const didGetBonusWithNewPosition = (piece: PieceProps) => {
-    if (piece.position === FINISHED) {
-      return true;
-    }
+  const didGetBonusWithNewPosition = (piece: PieceEntity) => {
+    if (piece.position === FINISHED) return true;
 
     if (
       piece.position === R1 ||
@@ -536,8 +493,8 @@ const Game = (props: GameProps) => {
     }
 
     const checkIfPositionMatchesExistingPiece = (
-      piece: PieceProps,
-      player: PlayerProps
+      piece: PieceEntity,
+      player: PlayerEntity
     ) => {
       const { one, two, three, four } = player.pieces;
       let positionMatched = false;
@@ -562,37 +519,37 @@ const Game = (props: GameProps) => {
     };
 
     if (
-      piece.color !== (red as PlayerProps).player &&
-      checkIfPositionMatchesExistingPiece(piece, red as PlayerProps)
+      piece.color !== (red as PlayerEntity).player &&
+      checkIfPositionMatchesExistingPiece(piece, red as PlayerEntity)
     ) {
       return true;
     }
     if (
-      piece.color !== (yellow as PlayerProps).player &&
-      checkIfPositionMatchesExistingPiece(piece, yellow as PlayerProps)
+      piece.color !== (yellow as PlayerEntity).player &&
+      checkIfPositionMatchesExistingPiece(piece, yellow as PlayerEntity)
     ) {
       return true;
     }
     if (
-      piece.color !== (green as PlayerProps).player &&
-      checkIfPositionMatchesExistingPiece(piece, green as PlayerProps)
+      piece.color !== (green as PlayerEntity).player &&
+      checkIfPositionMatchesExistingPiece(piece, green as PlayerEntity)
     ) {
       return true;
     }
     if (
-      piece.color !== (blue as PlayerProps).player &&
-      checkIfPositionMatchesExistingPiece(piece, blue as PlayerProps)
+      piece.color !== (blue as PlayerEntity).player &&
+      checkIfPositionMatchesExistingPiece(piece, blue as PlayerEntity)
     ) {
       return true;
     }
     return false;
   };
 
-  const updatePlayerPieces = (player: PlayerProps) => {
+  const updatePlayerPieces = (player: PlayerEntity) => {
     if (moves.length >= 1) {
       if (!isPlayerFinished(player)) {
         if (playerHasOptionsForMoves(player)) {
-          setAnimateForSelection(true);
+          setShouldAnimateForSelection(true);
         } else if (playerHasSinglePossibleMove(player)) {
           if (playerHasSingleUnfinishedPiece(player)) {
             let singlePossibleMove = getSinglePossibleMove(player);
@@ -614,23 +571,23 @@ const Game = (props: GameProps) => {
                 movePieceByPosition(piece, move);
               }
             } else {
-              setAnimateForSelection(true);
+              setShouldAnimateForSelection(true);
             }
           }
         } else {
           setTurn(getNextTurn());
           setMoves([]);
-          setAnimateForSelection(false);
+          setShouldAnimateForSelection(false);
         }
       } else {
         setTurn(getNextTurn());
         setMoves([]);
-        setAnimateForSelection(false);
+        setShouldAnimateForSelection(false);
       }
     } else {
       setTurn(getNextTurn());
       setMoves([]);
-      setAnimateForSelection(false);
+      setShouldAnimateForSelection(false);
     }
   };
 
@@ -659,25 +616,38 @@ const Game = (props: GameProps) => {
     return isMovePossible;
   };
 
-  const _onPieceSelection = (selectedPiece: PieceProps) => {
+  const _handlePieceSelection = (selectedPiece: PieceEntity) => {
+    console.log("GAME isWaitingForDiceRoll =>", isWaitingForDiceRoll);
+    // If the game is waiting for the dice roll to complete, do nothing
     if (isWaitingForDiceRoll) {
       return;
     }
 
-    const player = { red, yellow, green, blue }[turn] as PlayerProps;
+    // Get the current player's state based on whose turn it is
+    const player = { red, yellow, green, blue }[turn] as PlayerEntity;
     const { one, two, three, four } = player.pieces;
 
+    // If there is only one move available
     if (moves.length === 1) {
+      // If the piece is at HOME and the move is not a 6, do nothing (can't leave HOME without rolling a 6)
       if (selectedPiece.position === HOME && moves[0] !== 6) {
         return;
       }
-      const move = moves.shift();
+
+      let tempMoves = moves;
+      const move = tempMoves.shift();
       if (move !== undefined) {
-        movePieceByPosition(selectedPiece, move);
+        tempMoves.push(move);
+        setMoves(tempMoves);
+        movePieceByPosition(selectedPiece, move); // Move the selected piece by the given move value
       }
-    } else if (moves.length > 1) {
+    }
+    // If there are multiple moves available
+    else if (moves.length > 1) {
+      // If the selected piece is at HOME, it must move to its starting position
       if (selectedPiece.position === HOME) {
         moves.shift();
+        // Assign the piece to its starting position based on its color
         selectedPiece.position =
           selectedPiece.color === RED
             ? R1
@@ -691,24 +661,29 @@ const Game = (props: GameProps) => {
         selectedPiece.updateTime = new Date().getTime();
 
         if (moves.length === 1) {
+          // If only one move is left, check if the player has other move options
           if (playerHasOptionsForMoves(player)) {
             const move = moves.shift();
             if (move !== undefined) {
               movePieceByPosition(selectedPiece, move);
             }
           } else {
-            const isActivePiece = (piece: PieceProps) =>
+            // If no move options are available, check if all active pieces are in the same positio
+            const isActivePiece = (piece: PieceEntity) =>
               piece.position !== HOME && piece.position !== FINISHED;
 
             let activePieces = [];
-            isActivePiece(one) ? activePieces.push(one) : undefined;
-            isActivePiece(two) ? activePieces.push(two) : undefined;
-            isActivePiece(three) ? activePieces.push(three) : undefined;
-            isActivePiece(four) ? activePieces.push(four) : undefined;
+            if (isActivePiece(one)) activePieces.push(one);
+            if (isActivePiece(two)) activePieces.push(two);
+            if (isActivePiece(three)) activePieces.push(three);
+            if (isActivePiece(four)) activePieces.push(four);
 
             let isSamePositionForAllActivePieces = activePieces.every(
-              (piece: PieceProps) => piece.position === activePieces[0].position
+              (piece: PieceEntity) =>
+                piece.position === activePieces[0].position
             );
+
+            // If all active pieces are at the same position, move the selected piece
             if (isSamePositionForAllActivePieces) {
               const move = moves.shift();
               if (move !== undefined) {
@@ -718,6 +693,7 @@ const Game = (props: GameProps) => {
           }
         }
       } else {
+        // If the piece is not at HOME, prompt the user to select a move
         const onMoveSelected = (selectedMove: string) => {
           if (
             isMovePossibleForPosition(
@@ -735,6 +711,7 @@ const Game = (props: GameProps) => {
           }
         };
 
+        // Generate move options for the user
         let moveOptions = [];
         let optionOne = moves[0].toString();
         moveOptions.push({
@@ -744,23 +721,23 @@ const Game = (props: GameProps) => {
           },
         });
         let optionTwo = moves.length > 1 ? moves[1].toString() : undefined;
-        optionTwo
-          ? moveOptions.push({
-              text: optionTwo,
-              onPress: () => {
-                onMoveSelected(optionTwo);
-              },
-            })
-          : undefined;
+        if (optionTwo) {
+          moveOptions.push({
+            text: optionTwo,
+            onPress: () => {
+              onMoveSelected(optionTwo);
+            },
+          });
+        }
         let optionThree = moves.length > 2 ? moves[2].toString() : undefined;
-        optionThree
-          ? moveOptions.push({
-              text: optionThree,
-              onPress: () => {
-                onMoveSelected(optionThree);
-              },
-            })
-          : undefined;
+        if (optionThree) {
+          moveOptions.push({
+            text: optionThree,
+            onPress: () => {
+              onMoveSelected(optionThree);
+            },
+          });
+        }
 
         Alert.alert("Select Your Move", "", moveOptions, {
           cancelable: true,
@@ -769,89 +746,87 @@ const Game = (props: GameProps) => {
     }
   };
 
-  const RenderPlayer = (props: any) => {
-    const { player, customStyle } = props;
-    const { color, pieces } = player;
-    const { one, two, three, four } = pieces;
-
-    const opacity = turn === player.player ? 1 : 0.3;
-    const customStyles = { ...customStyle, opacity };
-    let hasSix = moves.filter((move) => move === 6).length > 0;
-
-    return (
-      <PlayerBox
-        colorName={color}
-        one={one}
-        two={two}
-        three={three}
-        four={four}
-        customStyle={customStyles}
-        animateForSelection={
-          animateForSelection && turn === player.player && hasSix
-        }
-        onPieceSelection={(selectedPiece) => {
-          if (turn === player.player) {
-            _onPieceSelection(selectedPiece);
-          }
-        }}
-      />
-    );
-  };
-
   const getPlayerState = () => {
     const state = red?.pieces &&
       yellow?.pieces &&
       green?.pieces &&
       blue?.pieces && { red, yellow, green, blue };
 
-    return state as PlayerState;
+    return state;
   };
+
+  if (isLoading) {
+    return <Text>Loading...</Text>; // Or a loading spinner
+  }
 
   return (
     <ImageBackground source={IMAGES.home} style={styles.container}>
       <View style={styles.gameContainer}>
         <View style={styles.twoPlayersContainer}>
-          <RenderPlayer player={red} customStyle={styles.redBox} />
+          {/* red player box */}
+          <PlayerContainer
+            playerData={red}
+            customStyle={styles.redBox}
+            turn={turn}
+            moves={moves}
+            animateForSelection={shouldAnimateForSelection}
+            onPieceSelection={_handlePieceSelection}
+          />
           <VerticalCellsContainer
             position={TOP_VERTICAL}
             state={getPlayerState()}
             turn={turn}
             moves={moves}
             isWaitingForDiceRoll={isWaitingForDiceRoll}
-            onPieceSelection={(selectedPiece: PieceProps) => {
-              _onPieceSelection(selectedPiece);
-            }}
+            onPieceSelection={_handlePieceSelection}
           />
-          <RenderPlayer player={yellow} customStyle={styles.yellowBox} />
+          {/* yellow player box */}
+          <PlayerContainer
+            playerData={yellow}
+            customStyle={styles.yellowBox}
+            turn={turn}
+            moves={moves}
+            animateForSelection={shouldAnimateForSelection}
+            onPieceSelection={_handlePieceSelection}
+          />
         </View>
         <HorizontalCellsContainer
           isRolling={isRolling}
-          setIsRolling={setIsRolling}
           diceNum={diceNum}
-          setDiceNum={setDiceNum}
           turn={turn}
-          setTurn={setTurn}
-          handleDiceRoll={handleDiceRoll}
           state={getPlayerState()}
           moves={moves}
           isWaitingForDiceRoll={isWaitingForDiceRoll}
-          onPieceSelection={(selectedPiece: PieceProps) => {
-            _onPieceSelection(selectedPiece);
-          }}
+          onDiceRoll={_handleDiceRoll}
+          onPieceSelection={_handlePieceSelection}
         />
         <View style={styles.twoPlayersContainer}>
-          <RenderPlayer player={blue} customStyle={styles.blueBox} />
+          {/* blue player box */}
+          <PlayerContainer
+            playerData={blue}
+            customStyle={styles.blueBox}
+            turn={turn}
+            moves={moves}
+            animateForSelection={shouldAnimateForSelection}
+            onPieceSelection={_handlePieceSelection}
+          />
           <VerticalCellsContainer
             position={BOTTOM_VERTICAL}
             state={getPlayerState()}
             turn={turn}
             moves={moves}
             isWaitingForDiceRoll={isWaitingForDiceRoll}
-            onPieceSelection={(selectedPiece: PieceProps) => {
-              _onPieceSelection(selectedPiece);
-            }}
+            onPieceSelection={_handlePieceSelection}
           />
-          <RenderPlayer player={green} customStyle={styles.greenBox} />
+          {/* green player box */}
+          <PlayerContainer
+            playerData={green}
+            customStyle={styles.greenBox}
+            turn={turn}
+            moves={moves}
+            animateForSelection={shouldAnimateForSelection}
+            onPieceSelection={_handlePieceSelection}
+          />
         </View>
       </View>
     </ImageBackground>

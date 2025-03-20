@@ -1,22 +1,22 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { COLORS } from "../assets";
-import { PieceProps } from "../utils";
+import { PieceEntity } from "../entities/PieceEntity";
 
 interface SinglePlayerProps {
-  piece: PieceProps;
-  onPieceSelection: (piece: any) => void;
+  piece: PieceEntity;
+  onPieceSelection: (piece: PieceEntity) => void;
 }
 
 interface PlayerBoxProps {
   colorName: string;
-  one: PieceProps;
-  two: PieceProps;
-  three: PieceProps;
-  four: PieceProps;
+  one: PieceEntity;
+  two: PieceEntity;
+  three: PieceEntity;
+  four: PieceEntity;
   customStyle?: any;
   animateForSelection: boolean;
-  onPieceSelection: (piece: any) => void;
+  onPieceSelection: (piece: PieceEntity) => void;
 }
 
 const PlayerBox = (props: PlayerBoxProps) => {
@@ -33,32 +33,58 @@ const PlayerBox = (props: PlayerBoxProps) => {
 
   const [bgColor, setBgColor] = useState(colorName);
   const [isAnimating, setIsAnimating] = useState(false);
-  // const [intervalId,setIntervalId] = useState(undefined);
 
-  let shouldRenderBackgroundColor = 1;
+  // let shouldRenderBackgroundColor = 1;
 
-  const applyAnimationIfNeeded = () => {
-    let intervalId;
+  useEffect(() => {
+    let intervalId = null;
+    console.log("PlayerBox animateForSelection =>", animateForSelection);
+    console.log("PlayerBox isAnimating =>", isAnimating);
+
     if (animateForSelection) {
       if (!isAnimating) {
         setIsAnimating(true);
         intervalId = setInterval(() => {
-          shouldRenderBackgroundColor++;
-          shouldRenderBackgroundColor % 2 == 0
-            ? setBgColor(colorName)
-            : setBgColor(COLORS.white);
+          setBgColor((prevColor) =>
+            prevColor === colorName ? COLORS.white : colorName
+          );
         }, 400);
       }
     } else {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
       if (isAnimating) {
         setIsAnimating(false);
         setBgColor(colorName);
       }
     }
-  };
 
-  applyAnimationIfNeeded();
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [animateForSelection, isAnimating, colorName]);
+
+  // const applyAnimationIfNeeded = () => {
+  //   let intervalId;
+  //   if (animateForSelection) {
+  //     if (!isAnimating) {
+  //       setIsAnimating(true);
+  //       intervalId = setInterval(() => {
+  //         shouldRenderBackgroundColor++;
+  //         shouldRenderBackgroundColor % 2 == 0
+  //           ? setBgColor(colorName)
+  //           : setBgColor(COLORS.white);
+  //       }, 400);
+  //     }
+  //   } else {
+  //     clearInterval(intervalId);
+  //     if (isAnimating) {
+  //       setIsAnimating(false);
+  //       setBgColor(colorName);
+  //     }
+  //   }
+  // };
+
+  // applyAnimationIfNeeded();
 
   return (
     <View style={[styles.player, customStyle, { backgroundColor: bgColor }]}>
